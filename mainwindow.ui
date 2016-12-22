@@ -17,8 +17,8 @@
    <widget class="QScrollArea" name="scrollArea">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>90</y>
+      <x>350</x>
+      <y>40</y>
       <width>141</width>
       <height>341</height>
      </rect>
@@ -66,8 +66,8 @@
    <widget class="QWidget" name="widget" native="true">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>0</y>
+      <x>350</x>
+      <y>-50</y>
       <width>141</width>
       <height>91</height>
      </rect>
@@ -75,7 +75,7 @@
     <widget class="QGraphicsView" name="graphicsView">
      <property name="geometry">
       <rect>
-       <x>0</x>
+       <x>10</x>
        <y>0</y>
        <width>141</width>
        <height>91</height>
@@ -86,8 +86,8 @@
    <widget class="Canvas" name="canvas" native="true">
     <property name="geometry">
      <rect>
-      <x>140</x>
-      <y>0</y>
+      <x>490</x>
+      <y>-50</y>
       <width>661</width>
       <height>431</height>
      </rect>
@@ -111,6 +111,8 @@
       <enum>Qt::Vertical</enum>
      </property>
     </widget>
+    <zorder>line</zorder>
+    <zorder>scrollArea</zorder>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -119,7 +121,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

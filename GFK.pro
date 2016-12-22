@@ -14,9 +14,13 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    canvas.cpp
+    canvas.cpp \
+    puzzlewidget.cpp \
+    piecelist.cpp
 
 HEADERS  += mainwindow.h \
-    canvas.h
+    canvas.h \
+    puzzlewidget.h \
+    piecelist.h
 
 FORMS    += mainwindow.ui
