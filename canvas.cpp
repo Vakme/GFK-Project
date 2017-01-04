@@ -8,7 +8,7 @@ Canvas::Canvas(QWidget *parent) : QWidget(parent)
 void Canvas::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
-
+    painter.setWindow(QRect(0, 0, 661, 431));
     //a simple line
     painter.drawLine(1,1,100,100);
 
