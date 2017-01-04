@@ -1,43 +1,3 @@
-/****************************************************************************
-**
-** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
-**
-** This file is part of the examples of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:BSD$
-** You may use this file under the terms of the BSD license as follows:
-**
-** "Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above copyright
-**     notice, this list of conditions and the following disclaimer in
-**     the documentation and/or other materials provided with the
-**     distribution.
-**   * Neither the name of The Qt Company Ltd nor the names of its
-**     contributors may be used to endorse or promote products derived
-**     from this software without specific prior written permission.
-**
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
-
 #include <QtGui>
 
 #include "puzzlewidget.h"
@@ -68,36 +28,10 @@ void PuzzleWidget::dragEnterEvent(QDragEnterEvent *event)
         event->ignore();
 }
 
-void PuzzleWidget::dragLeaveEvent(QDragLeaveEvent *event)
-{
-    QRect updateRect = highlightedRect;
-    highlightedRect = QRect();
-    update(updateRect);
-    event->accept();
-}
-
-void PuzzleWidget::dragMoveEvent(QDragMoveEvent *event)
-{
-    /*QRect updateRect = highlightedRect.united(targetSquare(event->pos()));
-
-    if (event->mimeData()->hasFormat("image/x-puzzle-piece")
-        && findPiece(targetSquare(event->pos())) == -1) {
-
-        highlightedRect = targetSquare(event->pos());
-        event->setDropAction(Qt::MoveAction);
-        event->accept();
-    } else {
-        highlightedRect = QRect();
-        event->ignore();
-    }
-
-    update(updateRect);*/
-}
-
 void PuzzleWidget::dropEvent(QDropEvent *event)
 {
-    if (event->mimeData()->hasFormat("image/x-puzzle-piece")
-        && findPiece(targetSquare(event->pos())) == -1) {
+    if (event->mimeData()->hasFormat("image/x-puzzle-piece") &&
+        !findPiece(targetSquare(event->pos()))) {
 
         QByteArray pieceData = event->mimeData()->data("image/x-puzzle-piece");
         QDataStream dataStream(&pieceData, QIODevice::ReadOnly);
@@ -127,57 +61,38 @@ void PuzzleWidget::dropEvent(QDropEvent *event)
     }
 }
 
-int PuzzleWidget::findPiece(const QRect &pieceRect) const
+void PuzzleWidget::dragMoveEvent(QDragMoveEvent *event)
 {
-    for (int i = 0; i < pieceRects.size(); ++i) {
-        if (pieceRect == pieceRects[i]) {
-            return i;
-        }
+    QRect updateRect = highlightedRect.united(targetSquare(event->pos()));
+    if (event->mimeData()->hasFormat("image/x-puzzle-piece")
+        && !findPiece(targetSquare(event->pos()))) {
+        highlightedRect = targetSquare(event->pos());
+        event->setDropAction(Qt::MoveAction);
+        event->accept();
+    } else {
+        highlightedRect = QRect();
+        event->ignore();
     }
-    return -1;
+    update(updateRect);
 }
 
-void PuzzleWidget::mousePressEvent(QMouseEvent *event)
+bool PuzzleWidget::findPiece(const QRect &pieceRect) const
 {
-    QRect square = targetSquare(event->pos());
-    int found = findPiece(square);
-
-    if (found == -1)
-        return;
-
-    QPoint location = pieceLocations[found];
-    QPixmap pixmap = piecePixmaps[found];
-    pieceLocations.removeAt(found);
-    piecePixmaps.removeAt(found);
-    pieceRects.removeAt(found);
-
-    if (location == QPoint(square.x()/pieceSize(), square.y()/pieceSize()))
-        inPlace--;
-
-    update(square);
-
-    QByteArray itemData;
-    QDataStream dataStream(&itemData, QIODevice::WriteOnly);
-
-    dataStream << pixmap << location;
-
-    QMimeData *mimeData = new QMimeData;
-    mimeData->setData("image/x-puzzle-piece", itemData);
-
-    QDrag *drag = new QDrag(this);
-    drag->setMimeData(mimeData);
-    drag->setHotSpot(event->pos() - square.topLeft());
-    drag->setPixmap(pixmap);
-
-    if (!(drag->exec(Qt::MoveAction) == Qt::MoveAction)) {
-        pieceLocations.insert(found, location);
-        piecePixmaps.insert(found, pixmap);
-        pieceRects.insert(found, square);
-        update(targetSquare(event->pos()));
-
-        if (location == QPoint(square.x()/pieceSize(), square.y()/pieceSize()))
-            inPlace++;
+    for (int i = 0; i < pieceRects.size(); ++i) {
+        if (pieceRects[i].contains(pieceRect)) {
+            return true;
+        }
     }
+    return false;
+}
+
+bool PuzzleWidget::findPiece(int x, int y) const {
+    for (int i = 0; i < pieceRects.size(); ++i) {
+        if (pieceRects[i].contains(x,y)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void PuzzleWidget::paintEvent(QPaintEvent *event)
@@ -200,7 +115,6 @@ void PuzzleWidget::paintEvent(QPaintEvent *event)
 
 const QRect PuzzleWidget::targetSquare(const QPoint &position) const
 {
-    //return QRect(position.x()/pieceSize() * pieceSize(), position.y()/pieceSize() * pieceSize(), pieceSize(), pieceSize());
     return QRect(position.x()-pieceSize()/2., position.y()-pieceSize()/2., pieceSize(), pieceSize());
 }
 

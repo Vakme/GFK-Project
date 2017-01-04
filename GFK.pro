@@ -16,11 +16,11 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     canvas.cpp \
     puzzlewidget.cpp \
-    piecelist.cpp
+    pieceslist.cpp
 
 HEADERS  += mainwindow.h \
     canvas.h \
     puzzlewidget.h \
-    piecelist.h
+    pieceslist.h
 
 FORMS    += mainwindow.ui

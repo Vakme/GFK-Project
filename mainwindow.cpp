@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "piecelist.h"
+#include "pieceslist.h"
 #include "puzzlewidget.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -15,6 +15,74 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
     setWindowTitle(tr("Tangram"));
+
+    ///////////////////////////////////////////////////
+ /*       QPolygon tan;
+        tan << QPoint(-100, -100)
+            << QPoint(100, -100)
+            << QPoint(0, 0)
+            << QPoint(-100, -100);
+        //tan << QPoint(0, -100);
+        QPixmap pixmap(tan.boundingRect().width()/2+1,
+                       tan.boundingRect().height()/2+1);
+        pixmap.fill( QColor( Qt::white) );
+
+        //QPixmap alpha = pixmap.createMaskFromColor(QColor( Qt::black ),Qt::MaskOutColor);
+        //pixmap.setAlphaChannel( alpha );
+
+        QPainter painter( &pixmap );
+        QBrush brush;
+        brush.setStyle(Qt::SolidPattern);
+        brush.setColor(Qt::black);
+        QPainterPath path;
+        path.addPolygon(tan);
+        painter.fillPath(path, brush);
+
+        painter.setPen( QPen( Qt::black) );
+        //painter.translate(tan.boundingRect().width()/4, tan.boundingRect().height()/2 );
+        //painter.drawPolygon( tan, Qt::WindingFill );
+*/
+
+
+
+            QPolygon poly;
+
+            /*poly << QPoint(0, 85) << QPoint(75, 75)
+                 << QPoint(100, 10) << QPoint(125, 75)
+                 << QPoint(200, 85) << QPoint(150, 125)
+                 << QPoint(160, 190) << QPoint(100, 150)
+                 << QPoint(40, 190) << QPoint(50, 125)
+                 << QPoint(0, 85);*/
+
+            poly << QPoint(0,0)
+                 << QPoint(200,0)
+                 << QPoint(100,100)
+                 << QPoint(0,0);
+
+            QPixmap pix(poly.boundingRect().width()+1,
+                        poly.boundingRect().height()+1);
+            pix.fill( QColor( Qt::white) );
+            QPainter painter2(&pix);
+
+            // style(), width(), brush(), capStyle() and joinStyle().
+            QPen pen(Qt::black);
+            painter2.setPen(pen);
+
+            // Brush
+            QBrush brush;
+            brush.setColor(Qt::black);
+            brush.setStyle(Qt::SolidPattern);
+
+            // Fill polygon
+            QPainterPath path;
+            path.addPolygon(poly);
+
+            // Draw polygon
+            painter2.drawPolygon(poly);
+            painter2.fillPath(path, brush);
+            piecesList->addPiece(pix, QPoint(0, 0));
+
+    ///////////////////////////////////////////////////
 }
 
 MainWindow::~MainWindow()
@@ -69,6 +137,8 @@ void MainWindow::setupPuzzle()
             piecesList->addPiece(pieceImage, QPoint(x, y));
         }
     }
+
+
 
     qsrand(QCursor::pos().x() ^ QCursor::pos().y());
 
