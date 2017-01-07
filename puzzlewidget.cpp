@@ -1,6 +1,6 @@
-#include <QtGui>
-
 #include "puzzlewidget.h"
+
+#include <QtWidgets>
 
 PuzzleWidget::PuzzleWidget(int imageSize, QWidget *parent)
     : QWidget(parent), m_ImageSize(imageSize)
@@ -22,24 +22,51 @@ void PuzzleWidget::clear()
 
 void PuzzleWidget::dragEnterEvent(QDragEnterEvent *event)
 {
-    if (event->mimeData()->hasFormat("image/x-puzzle-piece"))
+    if (event->mimeData()->hasFormat("image/x-puzzle-piece")) {
         event->accept();
-    else
+    } else
         event->ignore();
+}
+
+void PuzzleWidget::dragLeaveEvent(QDragLeaveEvent *event)
+{
+    QRect updateRect = highlightedRect;
+    highlightedRect = QRect();
+    update(updateRect);
+    event->accept();
+}
+
+void PuzzleWidget::dragMoveEvent(QDragMoveEvent *event)
+{
+    QRect updateRect = highlightedRect.united(targetSquare(event->pos()));
+
+    if (event->mimeData()->hasFormat("image/x-puzzle-piece")
+        && findPiece(targetSquare(event->pos())) == -1) {
+
+        highlightedRect = targetSquare(event->pos());
+        event->setDropAction(Qt::MoveAction);
+        event->accept();
+    } else {
+        highlightedRect = QRect();
+        event->ignore();
+    }
+
+    update(updateRect);
 }
 
 void PuzzleWidget::dropEvent(QDropEvent *event)
 {
-    if (event->mimeData()->hasFormat("image/x-puzzle-piece") &&
-        !findPiece(targetSquare(event->pos()))) {
+    if (event->mimeData()->hasFormat("image/x-puzzle-piece")
+        && findPiece(targetSquare(event->pos())) == -1) {
 
         QByteArray pieceData = event->mimeData()->data("image/x-puzzle-piece");
-        QDataStream dataStream(&pieceData, QIODevice::ReadOnly);
+        QDataStream stream(&pieceData, QIODevice::ReadOnly);
         QRect square = targetSquare(event->pos());
         QPixmap pixmap;
         QPoint location;
-        dataStream >> pixmap >> location;
+        stream >> pixmap >> location;
 
+        //location = location - mouseOnRectPos;
         pieceLocations.append(location);
         piecePixmaps.append(pixmap);
         pieceRects.append(square);
@@ -61,38 +88,86 @@ void PuzzleWidget::dropEvent(QDropEvent *event)
     }
 }
 
-void PuzzleWidget::dragMoveEvent(QDragMoveEvent *event)
+/*int PuzzleWidget::findPiece(const QRect &pieceRect) const
 {
-    QRect updateRect = highlightedRect.united(targetSquare(event->pos()));
-    if (event->mimeData()->hasFormat("image/x-puzzle-piece")
-        && !findPiece(targetSquare(event->pos()))) {
-        highlightedRect = targetSquare(event->pos());
-        event->setDropAction(Qt::MoveAction);
-        event->accept();
-    } else {
-        highlightedRect = QRect();
-        event->ignore();
+    for (int i = 0; i < pieceRects.size(); ++i) {
+        if (pieceRect == pieceRects[i])
+            return i;
     }
-    update(updateRect);
-}
+    return -1;
+}*/
 
-bool PuzzleWidget::findPiece(const QRect &pieceRect) const
+int PuzzleWidget::findPiece(const QRect &pieceRect) const
 {
     for (int i = 0; i < pieceRects.size(); ++i) {
         if (pieceRects[i].contains(pieceRect)) {
-            return true;
+            return i;
         }
     }
-    return false;
+    return -1;
 }
 
-bool PuzzleWidget::findPiece(int x, int y) const {
+int PuzzleWidget::findPiece(int x, int y) const {
     for (int i = 0; i < pieceRects.size(); ++i) {
         if (pieceRects[i].contains(x,y)) {
-            return true;
+            return i;
         }
     }
-    return false;
+    return -1;
+}
+
+int PuzzleWidget::findPiece(const QPoint &point) const {
+    for (int i = 0; i < pieceRects.size(); ++i) {
+        if (pieceRects[i].contains(point.x(),point.y())) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+
+void PuzzleWidget::mousePressEvent(QMouseEvent *event)
+{
+    QRect square = targetSquare(event->pos());
+    int found = findPiece(square);
+
+    if (found == -1)
+        return;
+
+    QPoint location = pieceLocations[found];
+    QPixmap pixmap = piecePixmaps[found];
+    pieceLocations.removeAt(found);
+    piecePixmaps.removeAt(found);
+    pieceRects.removeAt(found);
+
+    if (location == QPoint(square.x()/pieceSize(), square.y()/pieceSize()))
+        inPlace--;
+
+    update(square);
+
+    QByteArray itemData;
+    QDataStream dataStream(&itemData, QIODevice::WriteOnly);
+
+    dataStream << pixmap << location;
+
+    QMimeData *mimeData = new QMimeData;
+    mimeData->setData("image/x-puzzle-piece", itemData);
+
+    QDrag *drag = new QDrag(this);
+    drag->setMimeData(mimeData);
+    drag->setHotSpot(event->pos() - square.topLeft());
+    drag->setPixmap(pixmap);
+
+    if (drag->start(Qt::MoveAction) == 0) {
+        //mouseOnRectPos = location - event->pos();
+        pieceLocations.insert(found, location);
+        piecePixmaps.insert(found, pixmap);
+        pieceRects.insert(found, square);
+        update(targetSquare(event->pos()));
+
+        if (location == QPoint(square.x()/pieceSize(), square.y()/pieceSize()))
+            inPlace++;
+    }
 }
 
 void PuzzleWidget::paintEvent(QPaintEvent *event)
@@ -101,11 +176,11 @@ void PuzzleWidget::paintEvent(QPaintEvent *event)
     painter.begin(this);
     painter.fillRect(event->rect(), Qt::white);
 
-    if (highlightedRect.isValid()) {
+    /*if (highlightedRect.isValid()) {          // podświetlony kwadrat - rysowanie
         painter.setBrush(QColor("#ffcccc"));
         painter.setPen(Qt::NoPen);
         painter.drawRect(highlightedRect.adjusted(0, 0, -1, -1));
-    }
+    }*/
 
     for (int i = 0; i < pieceRects.size(); ++i) {
         painter.drawPixmap(pieceRects[i], piecePixmaps[i]);
@@ -115,7 +190,12 @@ void PuzzleWidget::paintEvent(QPaintEvent *event)
 
 const QRect PuzzleWidget::targetSquare(const QPoint &position) const
 {
-    return QRect(position.x()-pieceSize()/2., position.y()-pieceSize()/2., pieceSize(), pieceSize());
+    //return QRect(position.x()/pieceSize() * pieceSize(), position.y()/pieceSize() * pieceSize(), pieceSize(), pieceSize());
+    int i = findPiece(position);
+    if (i == -1)
+        return QRect(position.x()-pieceSize()/2., position.y()-pieceSize()/2., pieceSize(), pieceSize());
+        //return QRect(position.x(), position.y(), pieceSize(), pieceSize());
+    return pieceRects[i];
 }
 
 int PuzzleWidget::pieceSize() const

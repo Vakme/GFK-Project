@@ -2,8 +2,8 @@
 #define PUZZLEWIDGET_H
 
 #include <QList>
-#include <QPoint>
 #include <QPixmap>
+#include <QPoint>
 #include <QWidget>
 
 class QDragEnterEvent;
@@ -15,32 +15,36 @@ class PuzzleWidget : public QWidget
     Q_OBJECT
 
 public:
-    PuzzleWidget(int imageSize, QWidget *parent = 0);
+    explicit PuzzleWidget(int imageSize, QWidget *parent = 0);
     void clear();
 
     int pieceSize() const;
     int imageSize() const;
-    bool findPiece(const QRect &pieceRect) const;
-    bool findPiece(int x, int y) const;
 
 signals:
     void puzzleCompleted();
 
 protected:
-    void dragEnterEvent(QDragEnterEvent *event);
-    void dropEvent(QDropEvent *event);
-    void paintEvent(QPaintEvent *event);
-    void dragMoveEvent(QDragMoveEvent *event);
+    void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
+    void dragLeaveEvent(QDragLeaveEvent *event) Q_DECL_OVERRIDE;
+    void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
+    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+
 private:
+    int findPiece(const QRect &pieceRect) const;
+    int findPiece(int x, int y) const;
+    int findPiece(const QPoint &point) const;
     const QRect targetSquare(const QPoint &position) const;
 
     QList<QPixmap> piecePixmaps;
     QList<QRect> pieceRects;
-    QList<QPolygon> piecePolygons;
     QList<QPoint> pieceLocations;
     QRect highlightedRect;
     int inPlace;
     int m_ImageSize;
+    QPoint mouseOnRectPos;
 };
 
-#endif
+#endif // PUZZLEWIDGET_H
