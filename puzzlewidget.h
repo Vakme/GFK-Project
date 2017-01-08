@@ -5,6 +5,7 @@
 #include <QPixmap>
 #include <QPoint>
 #include <QWidget>
+#include <QPolygon>
 
 class QDragEnterEvent;
 class QDropEvent;
@@ -41,6 +42,7 @@ private:
     QList<QPixmap> piecePixmaps;
     QList<QRect> pieceRects;
     QList<QPoint> pieceLocations;
+    QList<QPolygon> piecePolygons;
     QRect highlightedRect;
     int inPlace;
     int m_ImageSize;

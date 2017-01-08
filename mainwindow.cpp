@@ -15,6 +15,110 @@ MainWindow::MainWindow(QWidget *parent)
 
     setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
     setWindowTitle(tr("Tangram"));
+
+    ////////////////////////////////////////////////////////////////
+
+    int imgSize = puzzleWidget->imageSize();
+
+    QPolygon poly;
+    poly    << QPoint(0,0)
+            << QPoint(imgSize/4,0)
+            << QPoint(imgSize/8,imgSize/8)
+            << QPoint(0,0);
+
+    QPixmap tan(imgSize/4,imgSize/4);
+    tan.fill(QColor(Qt::white));
+    QPainter paintTan(&tan);
+    QPen pen(Qt::black);
+    paintTan.setPen(pen);
+    QBrush brush;
+    brush.setColor(Qt::black);
+    brush.setStyle(Qt::SolidPattern);
+    QPainterPath path;
+    path.addPolygon(poly);
+    paintTan.drawPolygon(poly);
+    paintTan.fillPath(path, brush);
+
+    model->addPiece(tan.createMaskFromColor(Qt::white), QPoint(0,0));
+////
+    poly.clear();
+    tan.fill(QColor(Qt::white));
+    path = QPainterPath();
+    poly    << QPoint(0,0)
+            << QPoint(0,imgSize/4)
+            << QPoint(imgSize/8,imgSize/8)
+            << QPoint(0,0);
+    path.addPolygon(poly);
+    paintTan.drawPolygon(poly);
+    paintTan.fillPath(path, brush);
+    model->addPiece(tan.createMaskFromColor(Qt::white), QPoint(0,0));
+////
+    poly.clear();
+    tan.fill(QColor(Qt::white));
+    path = QPainterPath();
+    poly    << QPoint(imgSize/8,imgSize/8)
+            << QPoint(3*imgSize/16,imgSize/16)
+            << QPoint(3*imgSize/16,3*imgSize/16)
+            << QPoint(imgSize/8,imgSize/8);
+    path.addPolygon(poly);
+    paintTan.drawPolygon(poly);
+    paintTan.fillPath(path, brush);
+    model->addPiece(tan.createMaskFromColor(Qt::white), QPoint(0,0));
+////
+    poly.clear();
+    tan.fill(QColor(Qt::white));
+    path = QPainterPath();
+    poly    << QPoint(3*imgSize/16,imgSize/16)
+            << QPoint(imgSize/4,0)
+            << QPoint(imgSize/4,imgSize/8)
+            << QPoint(3*imgSize/16,3*imgSize/16)
+            << QPoint(3*imgSize/16,imgSize/16);
+    path.addPolygon(poly);
+    paintTan.drawPolygon(poly);
+    paintTan.fillPath(path, brush);
+    model->addPiece(tan.createMaskFromColor(Qt::white), QPoint(0,0));
+////
+
+    poly.clear();
+    tan.fill(QColor(Qt::white));
+    path = QPainterPath();
+    poly    << QPoint(imgSize/8,imgSize/8)
+            << QPoint(3*imgSize/16,3*imgSize/16)
+            << QPoint(imgSize/8,imgSize/4)
+            << QPoint(imgSize/16,3*imgSize/16)
+            << QPoint(imgSize/8,imgSize/8);
+    path.addPolygon(poly);
+    paintTan.drawPolygon(poly);
+    paintTan.fillPath(path, brush);
+    model->addPiece(tan.createMaskFromColor(Qt::white), QPoint(0,0));
+////
+    poly.clear();
+    tan.fill(QColor(Qt::white));
+    path = QPainterPath();
+    poly    << QPoint(0,imgSize/4)
+            << QPoint(imgSize/16,3*imgSize/16)
+            << QPoint(imgSize/8,imgSize/4)
+            << QPoint(0,imgSize/4);
+    path.addPolygon(poly);
+    paintTan.drawPolygon(poly);
+    paintTan.fillPath(path, brush);
+    model->addPiece(tan.createMaskFromColor(Qt::white), QPoint(0,0));
+////
+
+    poly.clear();
+    tan.fill(QColor(Qt::white));
+    path = QPainterPath();
+    poly    << QPoint(imgSize/8,imgSize/4)
+            << QPoint(imgSize/4,imgSize/8)
+            << QPoint(imgSize/4,imgSize/4)
+            << QPoint(imgSize/8,imgSize/4);
+    path.addPolygon(poly);
+    paintTan.drawPolygon(poly);
+    paintTan.fillPath(path, brush);
+    model->addPiece(tan.createMaskFromColor(Qt::white), QPoint(0,0));
+////
+
+    ///////////////////////////////////////////////////////////////
 }
 
 void MainWindow::openImage()
