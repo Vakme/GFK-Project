@@ -87,6 +87,11 @@ MainWindow::MainWindow(QWidget *parent)
             << QPoint(imgSize/8,imgSize/4)
             << QPoint(imgSize/16,3*imgSize/16)
             << QPoint(imgSize/8,imgSize/8);
+
+
+    puzzleWidget->rotatePolygon(poly, 45);
+
+
     path.addPolygon(poly);
     paintTan.drawPolygon(poly);
     paintTan.fillPath(path, brush);

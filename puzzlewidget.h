@@ -21,6 +21,7 @@ public:
 
     int pieceSize() const;
     int imageSize() const;
+    void rotatePolygon(QPolygon &poly, int angle);
 
 signals:
     void puzzleCompleted();

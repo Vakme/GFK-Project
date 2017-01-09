@@ -64,12 +64,14 @@ void PuzzleWidget::dropEvent(QDropEvent *event)
         QRect square = targetSquare(event->pos());
         QPixmap pixmap;
         QPoint location;
-        stream >> pixmap >> location;
+        QPolygon polygon;
+        stream >> pixmap >> location >> polygon;
 
         //location = location - mouseOnRectPos;
         pieceLocations.append(location);
         piecePixmaps.append(pixmap);
         pieceRects.append(square);
+        piecePolygons.append(polygon);
 
         highlightedRect = QRect();
         update(square);
@@ -206,4 +208,26 @@ int PuzzleWidget::pieceSize() const
 int PuzzleWidget::imageSize() const
 {
     return m_ImageSize;
+}
+
+void PuzzleWidget::rotatePolygon(QPolygon &poly, int angle)
+{
+    QTransform trans;
+    trans.rotate(angle);
+    poly = trans.map(poly);
+    QRect bound = poly.boundingRect();
+    int x=0,y=0;
+    if(bound.topLeft().x() < 0)
+        x = -bound.topLeft().x();
+    if(bound.topLeft().y() < 0)
+        y = -bound.topLeft().y();
+    if(bound.bottomRight().x() > imageSize()/4)
+        x = imageSize()/4-bound.bottomRight().x();
+    if(bound.bottomRight().y() > imageSize()/4)
+        y = imageSize()/4-bound.bottomRight().y();
+    if(x!=0 || y!=0) {
+        trans.reset();
+        trans.translate(x,y);
+        poly = trans.map(poly);
+    }
 }
