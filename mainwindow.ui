@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>431</height>
+    <height>509</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -49,7 +49,7 @@
              </property>
              <property name="minimumSize">
               <size>
-               <width>131</width>
+               <width>100</width>
                <height>271</height>
               </size>
              </property>
@@ -118,8 +118,6 @@
       <property name="styleSheet">
        <string notr="true">background-color: rgb(255, 255, 255);</string>
       </property>
-      <zorder>widget_2</zorder>
-      <zorder>widget_2</zorder>
      </widget>
     </item>
    </layout>

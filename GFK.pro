@@ -15,10 +15,16 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     canvas.cpp \
-    shapeslist.cpp
+    shapeslist.cpp \
+    element.cpp \
+    dragdrop.cpp
 
 HEADERS  += mainwindow.h \
     canvas.h \
-    shapeslist.h
+    shapeslist.h \
+    element.h \
+    dragdrop.h
 
 FORMS    += mainwindow.ui
+
+CONFIG += c++14

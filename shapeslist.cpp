@@ -14,3 +14,8 @@ void ShapesList::paintEvent(QPaintEvent *event)
 
 }
 
+void ShapesList::mousePressEvent(QMouseEvent *event)
+{
+    DragDrop drop(this);
+    drop.mousePressEvent(event, QString("shapesList"));
+}

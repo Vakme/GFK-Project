@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QPainter>
+#include "dragdrop.h"
 
 namespace Ui {
 class MainWindow;
@@ -18,6 +19,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    DragDrop *dragdrop;
 };
 
 #endif // MAINWINDOW_H
