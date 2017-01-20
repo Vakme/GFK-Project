@@ -17,12 +17,29 @@ void Canvas::paintEvent(QPaintEvent *event)
 }
 
 void Canvas::mousePressEvent(QMouseEvent *event) {
+    for(auto& v : elementsOnCanvas) {
+        qDebug() << "(next)";
+        if(v->contains(event->pos())) {
+            actualEl = v;
+            //qDebug() << event->pos() << " on " << static_cast<int>(v->typ);
+            DragDrop drop(this);
+            drop.mousePressEvent(event, actualEl, QString("canvas"));
+            return;
+        }
+    }
+    actualEl = nullptr;
+    qDebug() << "NoPe! " << event->pos();
+
     DragDrop drop(this);
-    drop.mousePressEvent(event, *&elementsOnCanvas, QString("canvas"));
+    drop.mousePressEvent(event, actualEl, QString("canvas"));
 }
 
 
 void Canvas::keyPressEvent(QKeyEvent *event) {
     DragDrop drop(this);
     drop.keyPressEvent(event);
+    if(actualEl == nullptr)
+        qDebug() << "nope!";
+    else
+        qDebug() << static_cast<int>(actualEl->typ);
 }

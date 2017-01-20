@@ -17,6 +17,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+protected:
+    virtual void keyPressEvent(QKeyEvent *event);
+
 private:
     Ui::MainWindow *ui;
     DragDrop *dragdrop;

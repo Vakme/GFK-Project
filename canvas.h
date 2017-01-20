@@ -28,6 +28,7 @@ public slots:
 
 private:
     std::vector<Element*> elementsOnCanvas;
+    Element* actualEl;
 };
 
 #endif // CANVAS_H

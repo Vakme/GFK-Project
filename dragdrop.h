@@ -11,7 +11,7 @@
 class DragDrop : public QDrag
 {
 public:
-    void mousePressEvent(QMouseEvent *event, const std::vector<Element*> & vec, const QString& type);
+    void mousePressEvent(QMouseEvent *event, const Element* vec, const QString& type);
     void keyPressEvent(QKeyEvent *event);
 
     DragDrop(QWidget* dragSource) : QDrag(reinterpret_cast<QObject*>(dragSource)) {}

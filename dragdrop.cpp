@@ -5,14 +5,7 @@
 #include <QMessageBox>
 #include <QMargins>
 
-void DragDrop::mousePressEvent(QMouseEvent *event, const std::vector<Element*> & vec, const QString& type) {
-    for(auto& v : vec) {
-        qDebug() << "(next)";
-        if(v->contains(event->pos())) {
-            //qDebug() << event->pos() << " on " << static_cast<int>(v->typ);
-            break;
-        }
-    }
+void DragDrop::mousePressEvent(QMouseEvent *event, const Element* el, const QString& type) {
     qDebug() << "Ok " << event->pos();
 }
 
