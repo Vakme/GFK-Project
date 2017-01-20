@@ -36,6 +36,7 @@ void Element::updateBitmap() {
 
         paint -> drawPolygon(getRealPoly(175,175));
         isChanged = false;
+        delete paint;
     }
 }
 
@@ -101,8 +102,38 @@ bool Element::contains(const QPointF & point) const {
     return getRealPoly(centerPoint.x(), centerPoint.y()).containsPoint(point, Qt::OddEvenFill);
 }
 
-void Element::draw(QPainter & painter) {
+void Element::draw(QPainter * painter) {
     updateBitmap();
-    painter.drawPixmap(centerPoint - QPoint(175,175), bitmap);
+    painter->drawPixmap(centerPoint - QPoint(175,175), bitmap);
 }
 
+
+void Element::rotateLeft() {
+    rotation -= 15;
+    isChanged = true;
+}
+
+void Element::rotateRight() {
+    rotation += 15;
+    isChanged = true;
+}
+
+void Element::moveUp() {
+    centerPoint -= QPointF(0, 10);
+}
+
+void Element::moveDown() {
+    centerPoint += QPointF(0, 10);
+}
+
+void Element::moveLeft() {
+    centerPoint -= QPointF(10, 0);
+}
+void Element::moveRight() {
+    centerPoint += QPointF(10, 0);
+}
+
+void Element::mirrorEl() {
+    if(mirrorable)
+        mirror = !mirror;
+}

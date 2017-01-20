@@ -5,6 +5,7 @@
 #include <QPolygon>
 #include <QPainter>
 #include <QBitmap>
+#include <QtDebug>
 
 enum class ElType { TRIANGLE_BIG, TRIANGLE_MID, TRIANGLE_SMALL, SQUARE, RHOMBUS };
 
@@ -14,12 +15,21 @@ public:
     Element() = delete;
     Element(const Element & el) = delete;
     bool contains(const QPointF & point) const;
-    void draw(QPainter & painter);
+    void draw(QPainter * painter);
 
     const ElType typ;
-    const QPointF centerPoint;
+
+    //był const, nie może być, musisz przesuwać obiekt. Jeśli musi być, to wywal, ale przesuwanie na strzałkach nie działa
+    QPointF centerPoint;
     const QColor color;
     QPolygonF getRealPoly(qreal x, qreal y) const;
+    void rotateLeft();
+    void rotateRight();
+    void moveUp();
+    void moveDown();
+    void moveLeft();
+    void moveRight();
+    void mirrorEl();
 
 protected:
     Element(ElType typ, QPointF centerPoint, const QPolygonF& points,

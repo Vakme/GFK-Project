@@ -10,10 +10,12 @@ Canvas::Canvas(QWidget *parent) : QWidget(parent),
 
 void Canvas::paintEvent(QPaintEvent *event)
 {
-    QPainter painter(this);
+    QPainter *painter = new QPainter(this);
+    qDebug() << "NOSZRYSUJ";
     for(Element *element : elementsOnCanvas) {
         element->draw(painter);
     }
+    delete painter;
 }
 
 void Canvas::mousePressEvent(QMouseEvent *event) {
@@ -36,10 +38,41 @@ void Canvas::mousePressEvent(QMouseEvent *event) {
 
 
 void Canvas::keyPressEvent(QKeyEvent *event) {
-    DragDrop drop(this);
-    drop.keyPressEvent(event);
     if(actualEl == nullptr)
         qDebug() << "nope!";
-    else
-        qDebug() << static_cast<int>(actualEl->typ);
+    else {
+        switch (event->key()) {
+        case Qt::Key_R:
+            qDebug() << "R";
+            actualEl -> rotateRight();
+            break;
+        case Qt::Key_E:
+            qDebug() << "E";
+            actualEl -> rotateLeft();
+            break;
+        case Qt::Key_W:
+            qDebug() << "W";
+            actualEl -> moveUp();
+            break;
+        case Qt::Key_S:
+            qDebug() << "S";
+            actualEl -> moveDown();
+            break;
+        case Qt::Key_A:
+            qDebug() << "A";
+            actualEl -> moveLeft();
+            break;
+        case Qt::Key_D:
+            qDebug() << "D";
+            actualEl -> moveRight();
+            break;
+        case Qt::Key_M:
+            qDebug() << "M";
+           // actualEl -> mirrorEl();       //Funkcja do odwracania jest gotowa, ale nie stestowana, a ja ledwo na oczy patrzę, jutro skończymy
+            break;
+        default:
+            break;
+        }
+        repaint();
+    }
 }
