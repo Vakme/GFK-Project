@@ -4,17 +4,26 @@
 
 Element::Element(ElType typ, QPointF centerPoint, const QPolygonF& points,
                  qreal rotation_max, bool mirrorable) :
-    typ(typ), centerPoint(centerPoint), points(points), color(nextColor()),
-    rotation_max(rotation_max), mirrorable(mirrorable)
+    typ(typ), centerPoint(centerPoint), color(nextColor()),
+    rotation_max(rotation_max), mirrorable(mirrorable), points(points)
 {
     rotation = 0;
     mirror = false;
     isChanged = true;
-    bitmap = QPixmap(300, 300);
+    bitmap = QPixmap(350, 350);
     bitmap.fill(QColor(0,0,0,0));
     updateBitmap();
 }
 
+QPolygonF Element::getRealPoly(qreal x, qreal y) const {
+    QTransform trans;
+    if(mirror) {
+        trans = QTransform(-1, 0, 0, 1, 0, 0);
+    }
+    trans.translate(x,y);
+    trans.rotate(rotation);
+    return trans.map(points);
+}
 
 void Element::updateBitmap() {
     if(isChanged) {
@@ -22,17 +31,10 @@ void Element::updateBitmap() {
 
         QPainter *paint = new QPainter(&bitmap);
         paint -> setRenderHints(QPainter::Antialiasing);
-        paint -> setPen(QPen(color));
+        paint -> setPen(QPen());
         paint -> setBrush(QBrush(color));
 
-        QTransform trans;
-        if(mirror) {
-            trans = QTransform(-1, 0, 0, 1, 0, 0);
-        }
-        trans.translate(150,150);
-        trans.rotate(rotation);
-
-        paint -> drawPolygon(trans.map(points));
+        paint -> drawPolygon(getRealPoly(175,175));
         isChanged = false;
     }
 }
@@ -96,11 +98,11 @@ QColor Element::nextColor() {
 
 
 bool Element::contains(const QPointF & point) const {
-    return points.containsPoint(point, Qt::OddEvenFill);
+    return getRealPoly(centerPoint.x(), centerPoint.y()).containsPoint(point, Qt::OddEvenFill);
 }
 
 void Element::draw(QPainter & painter) {
     updateBitmap();
-    painter.drawPixmap(centerPoint - QPoint(150,150), bitmap);
+    painter.drawPixmap(centerPoint - QPoint(175,175), bitmap);
 }
 

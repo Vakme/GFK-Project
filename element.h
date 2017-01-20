@@ -18,8 +18,8 @@ public:
 
     const ElType typ;
     const QPointF centerPoint;
-    const QPolygonF points;
     const QColor color;
+    QPolygonF getRealPoly(qreal x, qreal y) const;
 
 protected:
     Element(ElType typ, QPointF centerPoint, const QPolygonF& points,
@@ -29,6 +29,7 @@ private:
     void updateBitmap();
     static QColor nextColor();
 
+    const QPolygonF points;
     const qreal rotation_max;
     qreal rotation;
     const bool mirrorable;

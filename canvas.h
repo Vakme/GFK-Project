@@ -19,12 +19,15 @@ public:
 protected:
     void paintEvent(QPaintEvent *event);
 
+public:
+    void keyPressEvent(QKeyEvent *event);
+
 signals:
 
 public slots:
 
 private:
-    std::vector<Element *> elementsOnCanvas;
+    std::vector<Element*> elementsOnCanvas;
 };
 
 #endif // CANVAS_H

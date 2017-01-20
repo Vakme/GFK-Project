@@ -6,13 +6,15 @@
 #include <memory>
 #include <string>
 #include <QString>
+#include "element.h"
 
 class DragDrop : public QDrag
 {
 public:
-    void mousePressEvent(QMouseEvent *event, const QString& type);
+    void mousePressEvent(QMouseEvent *event, const std::vector<Element*> & vec, const QString& type);
+    void keyPressEvent(QKeyEvent *event);
 
-    DragDrop(QObject* dragSource) : QDrag(dragSource) {}
+    DragDrop(QWidget* dragSource) : QDrag(reinterpret_cast<QObject*>(dragSource)) {}
 };
 
 #endif // DRAGDROP_H
