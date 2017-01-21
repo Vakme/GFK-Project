@@ -1,18 +1,21 @@
+#include <memory>
+#include "utils.h"
 #include "canvas.h"
 
 Canvas::Canvas(QWidget *parent) : QWidget(parent),
-    elementsOnCanvas({
-      new Square       (150,  50),
-      new TriangleMid  (150, 200),
-      new TriangleSmall(150, 300),
-      new Rhombus      (450,  50)
-    }) {}
+    elementsOnCanvas(utils::make_unique_vector<Element>(
+      std::move(std::make_unique<Square>       (150,  50)),
+      std::move(std::make_unique<TriangleMid>  (150, 200)),
+      std::move(std::make_unique<TriangleSmall>(150, 300)),
+      std::move(std::make_unique<Rhombus>      (450,  50))
+    )) {
+}
 
 void Canvas::paintEvent(QPaintEvent *event)
 {
     QPainter *painter = new QPainter(this);
     qDebug() << "NOSZRYSUJ";
-    for(Element *element : elementsOnCanvas) {
+    for(auto& element : elementsOnCanvas) {
         element->draw(painter);
     }
     delete painter;
@@ -22,7 +25,7 @@ void Canvas::mousePressEvent(QMouseEvent *event) {
     for(auto& v : elementsOnCanvas) {
         qDebug() << "(next)";
         if(v->contains(event->pos())) {
-            actualEl = v;
+            actualEl = &*v;
             //qDebug() << event->pos() << " on " << static_cast<int>(v->typ);
             DragDrop drop(this);
             drop.mousePressEvent(event, actualEl, QString("canvas"));

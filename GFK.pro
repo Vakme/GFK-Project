@@ -23,7 +23,8 @@ HEADERS  += mainwindow.h \
     canvas.h \
     shapeslist.h \
     element.h \
-    dragdrop.h
+    dragdrop.h \
+    utils.h
 
 FORMS    += mainwindow.ui
 

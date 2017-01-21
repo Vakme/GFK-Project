@@ -6,6 +6,7 @@
 #include <QPainter>
 #include <QtGui>
 #include <memory>
+#include "utils.h"
 #include "element.h"
 #include "dragdrop.h"
 
@@ -27,7 +28,7 @@ signals:
 public slots:
 
 private:
-    std::vector<Element*> elementsOnCanvas;
+    utils::unique_vector<Element> elementsOnCanvas;
     Element* actualEl;
 };
 
