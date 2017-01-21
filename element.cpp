@@ -17,11 +17,11 @@ Element::Element(ElType typ, QPointF centerPoint, const QPolygonF& points,
 
 QPolygonF Element::getRealPoly(qreal x, qreal y) const {
     QTransform trans;
-    if(mirror) {
-        trans = QTransform(-1, 0, 0, 1, 0, 0);
-    }
     trans.translate(x,y);
     trans.rotate(rotation);
+    if(mirror) {
+        trans = QTransform(-1, 0, 0, 0, 1, 0, 0, 0, 1) * trans;
+    }
     return trans.map(points);
 }
 
@@ -109,31 +109,37 @@ void Element::draw(QPainter * painter) {
 
 
 void Element::rotateLeft() {
-    rotation -= 15;
+    rotation -= 1;
     isChanged = true;
 }
 
 void Element::rotateRight() {
-    rotation += 15;
+    rotation += 1;
     isChanged = true;
 }
 
 void Element::moveUp() {
-    centerPoint -= QPointF(0, 10);
+    centerPoint -= QPointF(0, 1);
+    isChanged = true;
 }
 
 void Element::moveDown() {
-    centerPoint += QPointF(0, 10);
+    centerPoint += QPointF(0, 1);
+    isChanged = true;
 }
 
 void Element::moveLeft() {
-    centerPoint -= QPointF(10, 0);
+    centerPoint -= QPointF(1, 0);
+    isChanged = true;
 }
 void Element::moveRight() {
-    centerPoint += QPointF(10, 0);
+    centerPoint += QPointF(1, 0);
+    isChanged = true;
 }
 
 void Element::mirrorEl() {
-    if(mirrorable)
+    if(mirrorable) {
         mirror = !mirror;
+        isChanged = true;
+    }
 }

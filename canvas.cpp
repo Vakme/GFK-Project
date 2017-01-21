@@ -71,7 +71,7 @@ void Canvas::keyPressEvent(QKeyEvent *event) {
             break;
         case Qt::Key_M:
             qDebug() << "M";
-           // actualEl -> mirrorEl();       //Funkcja do odwracania jest gotowa, ale nie stestowana, a ja ledwo na oczy patrzę, jutro skończymy
+            actualEl -> mirrorEl();       //Funkcja do odwracania jest gotowa, ale nie stestowana, a ja ledwo na oczy patrzę, jutro skończymy
             break;
         default:
             break;
