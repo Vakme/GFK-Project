@@ -9,6 +9,8 @@
 #include "utils.h"
 #include "element.h"
 
+enum class CursorMode { None, Element, Space };
+
 class Canvas : public QWidget
 {
     Q_OBJECT
@@ -31,12 +33,15 @@ private:
     utils::unique_vector<Element> elementsOnCanvas;
     Element* actualEl;
     std::unique_ptr<Element> dragEl;  // use std::optional in c++17
-    bool onDrag;
+    CursorMode cursorMode;
     QPointF dragPos;
     QPointF dragDiffVec;
     void startDrag(std::unique_ptr<Element>& el, QPointF pos);
     void revertElemToShapeList();
     void sendToShapeList(Element* to_send);
+
+    void resetCursorMode();
+    void selectRect(const QRectF & rec);
 
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);

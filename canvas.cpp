@@ -13,7 +13,7 @@ Canvas::Canvas(QWidget *parent) : QWidget(parent),
       std::move(std::make_unique<Rhombus>      (450,  50))
     )) {
     setMouseTracking(true);
-    onDrag = false;
+    cursorMode = CursorMode::None;
 }
 
 void Canvas::paintEvent(QPaintEvent *event)
@@ -95,18 +95,22 @@ bool Canvas::elementPositionValid(const Element & nel) {
     return is_ok;
 }
 
+void Canvas::selectRect(const QRectF & rec) {
+    //TODO: implement
+}
+
 void Canvas::revertElemToShapeList() {
     // if is valid, let it be
     // else send it back to shapeslist
     actualEl->setValid(true);
     sendToShapeList(actualEl);
     actualEl = nullptr;
-    onDrag = false;
+    cursorMode = CursorMode::None;
     repaint();
 }
 
 void Canvas::mouseMoveEvent(QMouseEvent *event) {
-    if(onDrag) {
+    if(cursorMode == CursorMode::Element) {
         dragPos = event->pos();
         dragEl->setCenterPoint(event->pos() + dragDiffVec);
         dragEl->setValid(elementPositionValid(*dragEl));
@@ -119,10 +123,6 @@ void Canvas::wheelEvent(QWheelEvent *event) {
         int rot_val = event->delta() / 16;
 
         dragEl->rotateRight(rot_val);
-        if(event->buttons() | Qt::MidButton) {
-            dragEl->mirrorEl();
-        }
-
         dragEl->setValid(elementPositionValid(*dragEl));
         repaint();
     }
@@ -153,6 +153,9 @@ void Canvas::keyPressEvent(QKeyEvent *event) {
 
 
 void Canvas::acceptForDrag(std::unique_ptr<Element>&& el) {
+    if(cursorMode != CursorMode::None) {
+        resetCursorMode();
+    }
     el->setValid(false);
     QPointF pos = el->centerPoint();
     elementsOnCanvas.push_back(std::move(el));
@@ -168,7 +171,7 @@ void Canvas::startDrag(std::unique_ptr<Element>& el, QPointF pos) {
 
     dragPos = pos;
     dragDiffVec = actualEl->centerPoint() - dragPos;
-    onDrag = true;
+    cursorMode = CursorMode::Element;
     setFocus();
 }
 

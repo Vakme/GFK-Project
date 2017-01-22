@@ -29,6 +29,7 @@ Element& Element::operator =(Element && el) {
         throw std::bad_cast();
     }
     rotation     = el.rotation;
+    mirror       = el.mirror;
     _centerPoint = el.centerPoint();
     isChanged = true;
     return *this;
