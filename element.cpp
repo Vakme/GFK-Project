@@ -88,17 +88,17 @@ Square::ElementKind(QPointF centerPoint) :
 template<>
 TriangleSmall::ElementKind(QPointF centerPoint) :
     ElementKindBase(centerPoint, QVector<QPointF>{
-                        QPointF( -35, -12),
-                        QPointF(  35, -12),
-                        QPointF(   0,  23)
+                        QPointF( -71, -23),
+                        QPointF(  71, -23),
+                        QPointF(   0,  47)
                     }) {}
 
 template<>
 TriangleMid::ElementKind(QPointF centerPoint) :
     ElementKindBase(centerPoint, QVector<QPointF>{
-                        QPointF( -71, -23),
-                        QPointF(  71, -23),
-                        QPointF(   0,  47)
+                        QPointF( -100, -33),
+                        QPointF(  100, -33),
+                        QPointF(   0,   66)
                     }) {}
 
 template<>
