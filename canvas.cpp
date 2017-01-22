@@ -3,6 +3,7 @@
 #include <memory>
 #include "utils.h"
 #include "canvas.h"
+#include "mainwindow.h"
 
 Canvas::Canvas(QWidget *parent) : QWidget(parent),
     elementsOnCanvas(utils::make_unique_vector<Element>(
@@ -11,7 +12,7 @@ Canvas::Canvas(QWidget *parent) : QWidget(parent),
       std::move(std::make_unique<TriangleSmall>(150, 300)),
       std::move(std::make_unique<Rhombus>      (450,  50))
     )) {
-
+    setMouseTracking(true);
     onDrag = false;
 }
 
@@ -41,14 +42,7 @@ void Canvas::mousePressEvent(QMouseEvent *event) {
         resetCursorMode();
         for(auto& el : elementsOnCanvas) {
             if(el->contains(event->pos())) {
-                actualEl = el.get();
-
-                std::unique_ptr<Element> dragElNew(Element::copy(*actualEl));
-                dragEl.swap(dragElNew);
-
-                dragPos = event->pos();
-                dragDiffVec = actualEl->centerPoint() - dragPos;
-                onDrag = true;
+                startDrag(el, QPointF(event->pos()));
                 return;
             }
         }
@@ -94,6 +88,16 @@ bool Canvas::elementPositionValid(const Element & nel) {
     return is_ok;
 }
 
+void Canvas::revertElemToShapeList() {
+    // if is valid, let it be
+    // else send it back to shapeslist
+    actualEl->setValid(true);
+    sendToShapeList(actualEl);
+    actualEl = nullptr;
+    onDrag = false;
+    repaint();
+}
+
 void Canvas::mouseMoveEvent(QMouseEvent *event) {
     if(onDrag) {
         dragPos = event->pos();
@@ -119,6 +123,11 @@ void Canvas::wheelEvent(QWheelEvent *event) {
 
 void Canvas::keyPressEvent(QKeyEvent *event) {
     if(actualEl != nullptr) {
+        if(event->key() == Qt::Key_X) {
+            revertElemToShapeList();
+            return;
+        }
+
         switch (event->key()) {
             case Qt::Key_R:  dragEl->rotateRight();  break;
             case Qt::Key_E:  dragEl->rotateLeft ();  break;
@@ -130,21 +139,42 @@ void Canvas::keyPressEvent(QKeyEvent *event) {
         }
 
         dragEl->setValid(elementPositionValid(*dragEl));
-        dragDiffVec = actualEl->centerPoint() - dragPos;
+        dragDiffVec = dragEl->centerPoint() - dragPos;
         repaint();
     }
 }
 
 
+void Canvas::acceptForDrag(std::unique_ptr<Element>&& el) {
+    el->setValid(false);
+    QPointF pos = el->centerPoint();
+    elementsOnCanvas.push_back(std::move(el));
+    // if there is active drag, it is automatically aborted
+    startDrag(elementsOnCanvas.back(), pos);
+}
 
-void Canvas::startDrag(QPoint pos, std::unique_ptr<Element>& el) {
-    QDrag *drag = new QDrag(this);
-    QMimeData *mimeData = new QMimeData;
+void Canvas::startDrag(std::unique_ptr<Element>& el, QPointF pos) {
+    actualEl = el.get();
 
-    mimeData->setText("Kabum!");
-    drag->setMimeData(mimeData);
-    drag->setPixmap(el->getBitmap());
-    drag->setHotSpot((pos - el->centerPoint() + QPoint(175,175)).toPoint());
+    std::unique_ptr<Element> dragElNew(Element::copy(*actualEl));
+    dragEl.swap(dragElNew);
 
-    Qt::DropAction dropAction = drag->exec();
+    dragPos = pos;
+    dragDiffVec = actualEl->centerPoint() - dragPos;
+    onDrag = true;
+    setFocus();
+}
+
+void Canvas::sendToShapeList(Element* to_send) {
+    auto it = std::find_if(elementsOnCanvas.begin(),
+                           elementsOnCanvas.end()  ,
+                           [to_send](const std::unique_ptr<Element> &el) {
+                             return el.get() == to_send;
+                           });
+    int idx = it - elementsOnCanvas.begin();
+    // not checking `it != myVec.end()` as it's a precondition
+    std::unique_ptr<Element> el;
+    el.swap(elementsOnCanvas[idx]);
+    elementsOnCanvas.erase(it);
+    MainWindow::main()->shapesList()->acceptForList(std::move(el));
 }

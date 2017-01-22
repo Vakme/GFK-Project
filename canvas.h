@@ -21,6 +21,7 @@ protected:
 
 public:
     void keyPressEvent(QKeyEvent *event);
+    void acceptForDrag(std::unique_ptr<Element>&& el);
 
 signals:
 
@@ -33,8 +34,10 @@ private:
     bool onDrag;
     QPointF dragPos;
     QPointF dragDiffVec;
+    void startDrag(std::unique_ptr<Element>& el, QPointF pos);
+    void revertElemToShapeList();
+    void sendToShapeList(Element* to_send);
 
-    void startDrag(QPoint pos, std::unique_ptr<Element>& el);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);

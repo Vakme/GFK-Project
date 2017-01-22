@@ -13,16 +13,18 @@ class ShapesList : public QListWidget
     Q_OBJECT
 public:
     explicit ShapesList(QWidget *parent = 0);
-    void addElement(std::unique_ptr<Element>&& el);
+    void acceptForList(std::unique_ptr<Element>&& el);
 
 protected:
 
 signals:
 
 public slots:
+    void sendToDrag(QListWidgetItem* item);
 
 private:
     utils::unique_vector<Element> elementsOnList;
+    void addElement(std::unique_ptr<Element>&& el);
 };
 
 #endif // SHAPESLIST_H

@@ -21,6 +21,7 @@ void Element::swap(Element *other) {
     Element tmp = Element(*this);
     *this = Element(*other);
     *other = std::move(tmp);
+    setValid(other->isValid());
 }
 
 Element& Element::operator =(Element && el) {
@@ -121,11 +122,17 @@ Rhombus::ElementKind(QPointF centerPoint) :
 QColor Element::nextColor() {
     static int color_num = 0;
     static QColor colors[] = {
-                               QColor(255, 31,  0),
-                               QColor(  0,255, 63),
-                               QColor(  0,127,255),
-                               QColor(  0,255,127),
-                               QColor(255,158,  0)
+                                QColor(  0,191,191),  // AQUA
+                                QColor(255,  0,127),  // ROSE
+                                QColor(  0,127,255),  // AZURE
+                                QColor(  0,239,  0),  // GREEN
+                                QColor(127,255,  0),  // CHARTREUSE
+                                QColor(239,239,  0),  // YELLOW
+                                QColor( 63, 63,255),  // BLUE
+                                QColor(255, 91,  0),  // RED
+                                QColor(255,127,  0),  // ORANGE
+                                QColor(239, 31,239),  // PINK
+                                QColor(127,  0,255),  // PURPLE
                              };
     color_num = (color_num + 1) % (sizeof(colors)/sizeof(colors[0]));
     return colors[color_num];
