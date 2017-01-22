@@ -16,6 +16,7 @@ public:
     Panel(int width, int height, QWidget *parent = 0);
     void ReadXMLFile();
     void setCanvasSize(int width, int height) {cwidth = width; cheight = height;}
+    std::vector<Element> elementsOnPanel;
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -25,7 +26,6 @@ signals:
 public slots:
 
 private:
-    std::vector<Element> elementsOnPanel;
     int cwidth;
     int cheight;
 };

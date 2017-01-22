@@ -52,10 +52,11 @@ void Canvas::keyPressEvent(QKeyEvent *event) {
     if(event->key() == Qt::Key_O)
         SaveXMLFile();
     else if(event->key() == Qt::Key_P) {
-        qDebug() << "JESZCZE DZIAŁA";
-        qDebug() << panel;
         panel->setCanvasSize(this->width(), this->height());
         panel->ReadXMLFile();
+    }
+    else if(event->key() == Qt::Key_C) {
+        compare();
     }
     else if(actualEl == nullptr)
         qDebug() << "nope!";
@@ -146,4 +147,43 @@ void Canvas::SaveXMLFile()
         file.close();
 }
 
+void compareElement(Element * cElement, Element * pElement) {
+    if(cElement->getMir()!=pElement->getMir()) {
+        qDebug() << "Złe odbicie";
+        return;
+    }
+    if(fabs(cElement->getRot()-pElement->getRot()) > 10) {
+        qDebug() << "Zły kąt";
+        return;
+    }
+    if(fabs(cElement->centerPoint.manhattanLength()-pElement->centerPoint.manhattanLength()) > 50) {
+        qDebug() << "Prawdopodobnie złe położenie";
+        return;
+    }
+}
+
+void Canvas::compare() {
+
+    if(elementsOnCanvas.size() == panel->elementsOnPanel.size()) {
+        qDebug() << "Ten sam rozmiar, idziemy dalej";
+        for (auto& cElement : elementsOnCanvas) {
+            for (auto& pElement : panel->elementsOnPanel) {
+                if(cElement->typ == pElement.typ) {
+                    qDebug() << "W tym samym elemencie";
+                    compareElement(cElement.get(), &pElement);
+                }
+                else {
+                    //Tutaj zaczyna się nieoptymalnie, mogę to jeszcze zmienić
+                    for (auto& cElementToCmp : elementsOnCanvas) {
+                        for (auto& pElementToCmp : panel->elementsOnPanel) {
+                               if(fabs((cElement->centerPoint-cElementToCmp->centerPoint).manhattanLength()
+                                       - (pElement.centerPoint-pElementToCmp.centerPoint).manhattanLength()) < 10)
+                                  qDebug() << "Różne odległości od siebie";
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 

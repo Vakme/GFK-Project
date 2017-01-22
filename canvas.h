@@ -33,6 +33,7 @@ private:
     Element* actualEl;
     void SaveXMLFile();
     Panel *panel;
+    void compare();
 };
 
 #endif // CANVAS_H
