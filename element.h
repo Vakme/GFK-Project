@@ -7,6 +7,7 @@
 #include <QBitmap>
 #include <QtDebug>
 
+#include <QXmlStreamReader>
 enum class ElType { TRIANGLE_BIG, TRIANGLE_MID, TRIANGLE_SMALL, SQUARE, RHOMBUS };
 
 class Element
@@ -15,7 +16,7 @@ public:
     Element() = delete;
     bool contains(const QPointF & point) const;
     void draw(QPainter * painter);
-
+    static Element *checkXML(QXmlStreamReader& Rxml);
     const ElType typ;
 
     //był const, nie może być, musisz przesuwać obiekt. Jeśli musi być, to wywal, ale przesuwanie na strzałkach nie działa
@@ -35,11 +36,12 @@ public:
     bool getMir() { return mirror; }
 
     //możesz mnie za to zabić.
-    Element(int typ, QPointF centerPoint, const QPolygonF points, qreal rotation, bool mirror, bool mirrorable, qreal rotation_max);
 
 protected:
     Element(ElType typ, QPointF centerPoint, const QPolygonF& points,
             qreal rotation_max = 360, bool mirrorable = false);
+    Element(int typ, QPointF centerPoint, const QPolygonF points, qreal rotation, bool mirror, bool mirrorable, qreal rotation_max);
+
 
 private:
     void updateBitmap();

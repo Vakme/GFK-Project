@@ -168,16 +168,16 @@ void Canvas::compare() {
         qDebug() << "Ten sam rozmiar, idziemy dalej";
         for (auto& cElement : elementsOnCanvas) {
             for (auto& pElement : panel->elementsOnPanel) {
-                if(cElement->typ == pElement.typ) {
+                if(cElement->typ == pElement->typ) {
                     qDebug() << "W tym samym elemencie";
-                    compareElement(cElement.get(), &pElement);
+                    compareElement(cElement.get(), pElement);
                 }
                 else {
                     //Tutaj zaczyna się nieoptymalnie, mogę to jeszcze zmienić
                     for (auto& cElementToCmp : elementsOnCanvas) {
                         for (auto& pElementToCmp : panel->elementsOnPanel) {
                                if(fabs((cElement->centerPoint-cElementToCmp->centerPoint).manhattanLength()
-                                       - (pElement.centerPoint-pElementToCmp.centerPoint).manhattanLength()) < 10)
+                                       - (pElement->centerPoint-pElementToCmp->centerPoint).manhattanLength()) < 10)
                                   qDebug() << "Różne odległości od siebie";
                         }
                     }
