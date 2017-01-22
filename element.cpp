@@ -34,46 +34,6 @@ Element& Element::operator =(Element && el) {
     return *this;
 }
 
-QPolygonF Element::getRealPoly(qreal x, qreal y) const {
-    QTransform trans;
-    trans.translate(x,y);
-    trans.rotate(rotation);
-    if(mirror) {
-        trans = QTransform(-1, 0, 0, 0, 1, 0, 0, 0, 1) * trans;
-    }
-    return trans.map(points);
-}
-
-QPolygonF Element::getRealPoly() const {
-    return getRealPoly(_centerPoint.x(), _centerPoint.y());
-}
-
-void Element::updateBitmap() {
-    if(isChanged) {
-        bitmap.fill(QColor(0,0,0,0));
-
-        QPainter paint(&bitmap);
-        paint.setRenderHints(QPainter::Antialiasing);
-
-        QColor colPen, colBrush;
-        Qt::BrushStyle styleBrush;
-        if(valid) {
-            colPen = QColor(0,0,0);
-            colBrush = color;
-            styleBrush = Qt::SolidPattern;
-        }
-        else {
-            colPen = QColor(255,0,0, 127);
-            colBrush = QColor(255, 0, 0);
-            styleBrush = Qt::Dense6Pattern;
-        }
-        paint.setPen(QPen(colPen));
-        paint.setBrush(QBrush(colBrush, styleBrush));
-
-        paint.drawPolygon(getRealPoly(175,175));
-        isChanged = false;
-    }
-}
 
 
 template<>
@@ -119,6 +79,9 @@ Rhombus::ElementKind(QPointF centerPoint) :
                     }, 180, true) {}
 
 
+
+
+
 QColor Element::nextColor() {
     static int color_num = 0;
     static QColor colors[] = {
@@ -126,7 +89,7 @@ QColor Element::nextColor() {
                                 QColor(255,  0,127),  // ROSE
                                 QColor(  0,127,255),  // AZURE
                                 QColor(  0,239,  0),  // GREEN
-                                QColor(127,255,  0),  // CHARTREUSE
+                                QColor(159,255,  0),  // CHARTREUSE
                                 QColor(239,239,  0),  // YELLOW
                                 QColor( 63, 63,255),  // BLUE
                                 QColor(255, 91,  0),  // RED
@@ -136,6 +99,49 @@ QColor Element::nextColor() {
                              };
     color_num = (color_num + 1) % (sizeof(colors)/sizeof(colors[0]));
     return colors[color_num];
+}
+
+
+
+QPolygonF Element::getRealPoly(qreal x, qreal y) const {
+    QTransform trans;
+    trans.translate(x,y);
+    trans.rotate(rotation);
+    if(mirror) {
+        trans = QTransform(-1, 0, 0, 0, 1, 0, 0, 0, 1) * trans;
+    }
+    return trans.map(points);
+}
+
+QPolygonF Element::getRealPoly() const {
+    return getRealPoly(_centerPoint.x(), _centerPoint.y());
+}
+
+void Element::updateBitmap() {
+    if(isChanged) {
+        bitmap.fill(QColor(0,0,0,0));
+
+        QPainter paint(&bitmap);
+        paint.setRenderHints(QPainter::Antialiasing);
+
+        QColor colPen, colBrush;
+        Qt::BrushStyle styleBrush;
+        if(valid) {
+            colPen = QColor(0,0,0);
+            colBrush = color;
+            styleBrush = Qt::SolidPattern;
+        }
+        else {
+            colPen = QColor(255,0,0, 127);
+            colBrush = QColor(255, 0, 0);
+            styleBrush = Qt::Dense6Pattern;
+        }
+        paint.setPen(QPen(colPen));
+        paint.setBrush(QBrush(colBrush, styleBrush));
+
+        paint.drawPolygon(getRealPoly(175,175));
+        isChanged = false;
+    }
 }
 
 
