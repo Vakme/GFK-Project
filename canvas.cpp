@@ -78,6 +78,13 @@ void Canvas::resetCursorMode() {
 }
 
 bool Canvas::elementPositionValid(const Element & nel) {
+    // invalid if outside of the canvas
+    QRect rec = contentsRect();
+    if(!nel.getRealPoly().boundingRect().intersects(rec)) {
+        return false;
+    }
+
+    // invalid if intersects with others
     bool is_ok = true;
     for(auto& el : elementsOnCanvas) {
         if(el.get() != actualEl && nel.intersects(*el)) {
