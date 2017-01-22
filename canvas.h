@@ -8,7 +8,6 @@
 #include <memory>
 #include "utils.h"
 #include "element.h"
-#include "dragdrop.h"
 
 class Canvas : public QWidget
 {

@@ -5,7 +5,6 @@
 #include <QPolygon>
 #include <QPainter>
 #include <QBitmap>
-#include <QtDebug>
 
 enum class ElType { TRIANGLE_BIG, TRIANGLE_MID, TRIANGLE_SMALL, SQUARE, RHOMBUS };
 

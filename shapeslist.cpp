@@ -1,21 +1,15 @@
 #include "shapeslist.h"
 
-ShapesList::ShapesList(QWidget *parent) : QWidget(parent)
-{
-
+ShapesList::ShapesList(QWidget *parent) : QListWidget(parent) {
+    addElement(std::move(std::make_unique<TriangleMid>(150, 150)));
+    addElement(std::move(std::make_unique<TriangleBig>(250, 250)));
+    addElement(std::move(std::make_unique<TriangleBig>(350, 350)));
 }
 
-void ShapesList::paintEvent(QPaintEvent *event)
-{
-    QPainter painter(this);
-
-    //a simple line
-    painter.drawLine(1,1,50,50);
-
-}
-
-void ShapesList::mousePressEvent(QMouseEvent *event)
-{
-    DragDrop drop(this);
-    //drop.mousePressEvent(event, QString("shapesList"));
+void ShapesList::addElement(std::unique_ptr<Element>&& el) {
+    QIcon icon = el->getBitmap();
+    elementsOnList.push_back(std::move(el));
+    QListWidgetItem *wl = new QListWidgetItem();
+    wl->setIcon(QIcon(icon));
+    addItem(wl);
 }
