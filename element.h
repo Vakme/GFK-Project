@@ -13,20 +13,25 @@ class Element
 {
 public:
     Element() = delete;
-    Element(const Element & el) = delete;
+    Element& operator =(Element && el);
+    static Element* copy(const Element & el) { return new Element(el); }
+    void swap(Element *other);
+
     bool contains(const QPointF & point) const;
     void draw(QPainter * painter);
 
     const ElType typ;
 
     //był const, nie może być, musisz przesuwać obiekt. Jeśli musi być, to wywal, ale przesuwanie na strzałkach nie działa
-    QPointF centerPoint();
+    QPointF centerPoint() const;
     void setCenterPoint(QPointF center);
     const QColor color;
     QPolygonF getRealPoly(qreal x, qreal y) const;
     QPolygonF getRealPoly() const;
 
-    bool intersects(const Element& other);
+    bool isValid() const;
+    void setValid(bool flag);
+    bool intersects(const Element& other) const;
     void rotateLeft (int val = 1);
     void rotateRight(int val = 1);
     void moveUp     (int val = 1);
@@ -41,6 +46,8 @@ protected:
             qreal rotation_max = 360, bool mirrorable = false);
 
 private:
+    Element(const Element & el) = default;
+
     void updateBitmap();
     void reduceRotation();
     static QColor nextColor();
@@ -52,6 +59,7 @@ private:
     const bool mirrorable;
     bool mirror;
     QPixmap bitmap;
+    bool valid;
     bool isChanged;
 };
 

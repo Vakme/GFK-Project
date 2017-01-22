@@ -15,7 +15,7 @@ class Canvas : public QWidget
     Q_OBJECT
 public:
     explicit Canvas(QWidget *parent = 0);
-    bool elementPositionValid(Element *nel);
+    bool elementPositionValid(const Element & nel);
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -30,6 +30,7 @@ public slots:
 private:
     utils::unique_vector<Element> elementsOnCanvas;
     Element* actualEl;
+    std::unique_ptr<Element> dragEl;  // use std::optional in c++17
     bool onDrag;
     QPointF dragPos;
     QPointF dragDiffVec;

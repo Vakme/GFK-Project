@@ -18,8 +18,14 @@ Canvas::Canvas(QWidget *parent) : QWidget(parent),
 void Canvas::paintEvent(QPaintEvent *event)
 {
     QPainter *painter = new QPainter(this);
-    for(auto& element : elementsOnCanvas) {
-        element->draw(painter);
+    for(auto& el : elementsOnCanvas) {
+        if(el.get() != actualEl) {
+            el->draw(painter);
+        }
+    }
+
+    if(actualEl != nullptr) {
+        dragEl->draw(painter);
     }
     delete painter;
 }
@@ -36,6 +42,10 @@ void Canvas::mousePressEvent(QMouseEvent *event) {
         for(auto& el : elementsOnCanvas) {
             if(el->contains(event->pos())) {
                 actualEl = el.get();
+
+                std::unique_ptr<Element> dragElNew(Element::copy(*actualEl));
+                dragEl.swap(dragElNew);
+
                 dragPos = event->pos();
                 dragDiffVec = actualEl->centerPoint() - dragPos;
                 onDrag = true;
@@ -71,13 +81,12 @@ void Canvas::resetCursorMode() {
     }
     cursorMode = CursorMode::None;
     repaint();
->>>>>>> dd145be... (poprawienie scrolla)
 }
 
-bool Canvas::elementPositionValid(Element *nel) {
+bool Canvas::elementPositionValid(const Element & nel) {
     bool is_ok = true;
     for(auto& el : elementsOnCanvas) {
-        if(el.get() != nel && nel->intersects(*el)) {
+        if(el.get() != actualEl && nel.intersects(*el)) {
             is_ok = false;
             break;
         }
@@ -88,16 +97,9 @@ bool Canvas::elementPositionValid(Element *nel) {
 void Canvas::mouseMoveEvent(QMouseEvent *event) {
     if(onDrag) {
         dragPos = event->pos();
-        QPointF oldPos = actualEl->centerPoint();
-        actualEl->setCenterPoint(event->pos() + dragDiffVec);
-
-        if(elementPositionValid(actualEl)) {
-            repaint();
-        }
-        else {
-            actualEl->setCenterPoint(oldPos);
-            dragDiffVec = actualEl->centerPoint() - dragPos;
-        }
+        dragEl->setCenterPoint(event->pos() + dragDiffVec);
+        dragEl->setValid(elementPositionValid(*dragEl));
+        repaint();
     }
 }
 
@@ -105,53 +107,30 @@ void Canvas::wheelEvent(QWheelEvent *event) {
     if(actualEl != nullptr) {
         int rot_val = event->delta() / 8;
 
-        actualEl->rotateRight(rot_val);
+        dragEl->rotateRight(rot_val);
         if(event->buttons() | Qt::MidButton) {
-            actualEl->mirrorEl();
+            dragEl->mirrorEl();
         }
 
-        if(elementPositionValid(actualEl)) {
-            repaint();
-        }
-        else {
-            actualEl->rotateLeft(rot_val);
-            if(event->buttons() | Qt::MidButton) {
-                actualEl->mirrorEl();
-            }
-        }
+        dragEl->setValid(elementPositionValid(*dragEl));
+        repaint();
     }
 }
 
 void Canvas::keyPressEvent(QKeyEvent *event) {
     if(actualEl != nullptr) {
-        QPointF oldPos = actualEl->centerPoint();
-        actualEl->setCenterPoint(dragPos + dragDiffVec);
         switch (event->key()) {
-            case Qt::Key_R:  actualEl->rotateRight();  break;
-            case Qt::Key_E:  actualEl->rotateLeft ();  break;
-            case Qt::Key_W:  actualEl->moveUp     ();  break;
-            case Qt::Key_S:  actualEl->moveDown   ();  break;
-            case Qt::Key_A:  actualEl->moveLeft   ();  break;
-            case Qt::Key_D:  actualEl->moveRight  ();  break;
-            case Qt::Key_M:  actualEl->mirrorEl   ();  break;
+            case Qt::Key_R:  dragEl->rotateRight();  break;
+            case Qt::Key_E:  dragEl->rotateLeft ();  break;
+            case Qt::Key_W:  dragEl->moveUp     ();  break;
+            case Qt::Key_S:  dragEl->moveDown   ();  break;
+            case Qt::Key_A:  dragEl->moveLeft   ();  break;
+            case Qt::Key_D:  dragEl->moveRight  ();  break;
+            case Qt::Key_M:  dragEl->mirrorEl   ();  break;
         }
 
-        if(elementPositionValid(actualEl)) {
-            repaint();
-            dragDiffVec = actualEl->centerPoint() - dragPos;
-        }
-        else {
-            actualEl->setCenterPoint(oldPos);
-            switch (event->key()) {
-                case Qt::Key_R:  actualEl->rotateLeft ();  break;
-                case Qt::Key_E:  actualEl->rotateRight();  break;
-                case Qt::Key_W:  actualEl->moveDown   ();  break;
-                case Qt::Key_S:  actualEl->moveUp     ();  break;
-                case Qt::Key_A:  actualEl->moveRight  ();  break;
-                case Qt::Key_D:  actualEl->moveLeft   ();  break;
-                case Qt::Key_M:  actualEl->mirrorEl   ();  break;
-            }
-        }
+        dragEl->setValid(elementPositionValid(*dragEl));
+        repaint();
     }
 }
 

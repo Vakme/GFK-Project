@@ -1,12 +1,13 @@
 #include <cmath>
-#include "element.h"
+#include <typeinfo>
 #include <QTransform>
+#include "element.h"
 
 
 Element::Element(ElType typ, QPointF center, const QPolygonF& points,
                  qreal rotation_max, bool mirrorable) :
-    typ(typ), _centerPoint(center), color(nextColor()),
-    rotation_max(rotation_max), mirrorable(mirrorable), points(points)
+    typ(typ), color(nextColor()), _centerPoint(center), points(points),
+    rotation_max(rotation_max), mirrorable(mirrorable), valid(true)
 {
     rotation = 0;
     mirror = false;
@@ -14,6 +15,22 @@ Element::Element(ElType typ, QPointF center, const QPolygonF& points,
     bitmap = QPixmap(350, 350);
     bitmap.fill(QColor(0,0,0,0));
     updateBitmap();
+}
+
+void Element::swap(Element *other) {
+    Element tmp = Element(*this);
+    *this = Element(*other);
+    *other = std::move(tmp);
+}
+
+Element& Element::operator =(Element && el) {
+    if(typ != el.typ) {
+        throw std::bad_cast();
+    }
+    rotation     = el.rotation;
+    _centerPoint = el.centerPoint();
+    isChanged = true;
+    return *this;
 }
 
 QPolygonF Element::getRealPoly(qreal x, qreal y) const {
@@ -36,8 +53,21 @@ void Element::updateBitmap() {
 
         QPainter *paint = new QPainter(&bitmap);
         paint -> setRenderHints(QPainter::Antialiasing);
-        paint -> setPen(QPen());
-        paint -> setBrush(QBrush(color));
+
+        QColor colPen, colBrush;
+        Qt::BrushStyle styleBrush;
+        if(valid) {
+            colPen = QColor(0,0,0);
+            colBrush = color;
+            styleBrush = Qt::SolidPattern;
+        }
+        else {
+            colPen = QColor(255,0,0, 127);
+            colBrush = QColor(255, 0, 0);
+            styleBrush = Qt::Dense6Pattern;
+        }
+        paint->setPen(QPen(colPen));
+        paint->setBrush(QBrush(colBrush, styleBrush));
 
         paint -> drawPolygon(getRealPoly(175,175));
         isChanged = false;
@@ -103,12 +133,21 @@ QColor Element::nextColor() {
 }
 
 
-QPointF Element::centerPoint() {
+QPointF Element::centerPoint() const {
     return _centerPoint;
 }
 
 void Element::setCenterPoint(QPointF center) {
     _centerPoint = center;
+    isChanged = true;
+}
+
+bool Element::isValid() const {
+    return valid;
+}
+
+void Element::setValid(bool flag) {
+    valid = flag;
     isChanged = true;
 }
 
@@ -126,7 +165,7 @@ const QPixmap & Element::getBitmap() {
     return bitmap;
 }
 
-bool Element::intersects(const Element& other) {
+bool Element::intersects(const Element& other) const {
     return ! getRealPoly().intersected(other.getRealPoly()).isEmpty();
 }
 
