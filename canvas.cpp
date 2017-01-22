@@ -103,8 +103,6 @@ void Canvas::SaveXMLFile()
     QString filename = QFileDialog::getSaveFileName(this,
                                        tr("Save Xml"), ".",
                                        tr("Xml files (*.xml)"));
-
-
     QFile file(filename);
     file.open(QIODevice::WriteOnly);
 
@@ -115,28 +113,19 @@ void Canvas::SaveXMLFile()
     xmlWriter.writeStartElement("elements");
     for(auto & el : elementsOnCanvas) {
         xmlWriter.writeStartElement("element");
-        xmlWriter.writeTextElement("Type", QString::number(static_cast<int>(el->typ) ));
-        xmlWriter.writeStartElement("CenterPoint");
-        xmlWriter.writeTextElement("x", QString::number(el->centerPoint.x()));
-        xmlWriter.writeTextElement("y", QString::number(el->centerPoint.y()));
-        xmlWriter.writeEndElement();
-        xmlWriter.writeStartElement("Color");
-        xmlWriter.writeTextElement("r", QString::number(el->color.red()));
-        xmlWriter.writeTextElement("g", QString::number(el->color.green()));
-        xmlWriter.writeTextElement("b", QString::number(el->color.blue()));
-        xmlWriter.writeEndElement();
-        xmlWriter.writeTextElement("Rotation",  QString::number(el->getRot()));
-        xmlWriter.writeTextElement("Mirror",  QString::number(el->getMir()));
+        xmlWriter.writeAttribute("Type", QString::number(static_cast<int>(el->typ) ));
+        xmlWriter.writeAttribute("Rotation",  QString::number(el->getRot()));
+        xmlWriter.writeAttribute("x", QString::number(el->centerPoint.x()));
+        xmlWriter.writeAttribute("y", QString::number(el->centerPoint.y()));
+        if(el->getMirable())
+            xmlWriter.writeAttribute("Mirror",  QString::number(el->getMir()));
 
-        xmlWriter.writeStartElement("Points");
         for(auto & point : el ->getPoly())
         {
-            xmlWriter.writeStartElement("Point");
-            xmlWriter.writeTextElement("x", QString::number(point.x()));
-            xmlWriter.writeTextElement("y", QString::number(point.y()));
-            xmlWriter.writeEndElement();
+            xmlWriter.writeEmptyElement("Point");
+            xmlWriter.writeAttribute("x", QString::number(point.x()));
+            xmlWriter.writeAttribute("y", QString::number(point.y()));
         }
-        xmlWriter.writeEndElement();
 
         xmlWriter.writeEndElement();
     }

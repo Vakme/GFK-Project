@@ -169,7 +169,10 @@ Element *Element::checkXML(QXmlStreamReader &Rxml) {
     int r = 0, g = 0, b = 0;
     QVector<QPointF> pointVec;
 
+    QXmlStreamAttributes attrs;
+
     while((Rxml.name() != "element" && !Rxml.isEndElement())) {
+//    if(Rxml.name() == "element")
     if(Rxml.name() == "Rotation") {
             rotation = Rxml.readElementText().toDouble();
             qDebug() << QString::number(rotation);

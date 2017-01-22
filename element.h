@@ -34,6 +34,7 @@ public:
     QPolygonF getPoly() { return points; }
     qreal getRot() { return rotation; }
     bool getMir() { return mirror; }
+    bool getMirable() { return mirrorable; }
 
     //możesz mnie za to zabić.
 
