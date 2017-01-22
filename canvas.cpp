@@ -25,7 +25,14 @@ void Canvas::paintEvent(QPaintEvent *event)
 }
 
 void Canvas::mousePressEvent(QMouseEvent *event) {
+    if(event->button() & Qt::MidButton  &&  cursorMode == CursorMode::Element) {
+        dragEl->mirrorEl();
+        repaint();
+        return;
+    }
+
     if(event->button() == Qt::LeftButton) {
+        resetCursorMode();
         for(auto& el : elementsOnCanvas) {
             if(el->contains(event->pos())) {
                 actualEl = el.get();
@@ -35,13 +42,36 @@ void Canvas::mousePressEvent(QMouseEvent *event) {
                 return;
             }
         }
-        actualEl = nullptr;
     }
 }
 
 void Canvas::mouseReleaseEvent(QMouseEvent *event) {
-    actualEl = nullptr;
-    onDrag = false;
+    if( !(event->button() & Qt::MidButton  &&  cursorMode == CursorMode::Element) ) {
+        resetCursorMode();
+    }
+}
+
+void Canvas::resetCursorMode() {
+    switch(cursorMode) {
+        case CursorMode::None:
+            return;
+        case CursorMode::Element:
+            if(dragEl->isValid()) {
+                actualEl->swap(dragEl.get());
+            }
+            else if( !(actualEl->isValid()) ) {
+                revertElemToShapeList();
+                return;
+            }
+            actualEl = nullptr;
+            break;
+        case CursorMode::Space:
+            //TODO: implement
+            break;
+    }
+    cursorMode = CursorMode::None;
+    repaint();
+>>>>>>> dd145be... (poprawienie scrolla)
 }
 
 bool Canvas::elementPositionValid(Element *nel) {
@@ -67,6 +97,27 @@ void Canvas::mouseMoveEvent(QMouseEvent *event) {
         else {
             actualEl->setCenterPoint(oldPos);
             dragDiffVec = actualEl->centerPoint() - dragPos;
+        }
+    }
+}
+
+void Canvas::wheelEvent(QWheelEvent *event) {
+    if(actualEl != nullptr) {
+        int rot_val = event->delta() / 8;
+
+        actualEl->rotateRight(rot_val);
+        if(event->buttons() | Qt::MidButton) {
+            actualEl->mirrorEl();
+        }
+
+        if(elementPositionValid(actualEl)) {
+            repaint();
+        }
+        else {
+            actualEl->rotateLeft(rot_val);
+            if(event->buttons() | Qt::MidButton) {
+                actualEl->mirrorEl();
+            }
         }
     }
 }
