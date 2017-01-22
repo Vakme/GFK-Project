@@ -51,8 +51,8 @@ void Element::updateBitmap() {
     if(isChanged) {
         bitmap.fill(QColor(0,0,0,0));
 
-        QPainter *paint = new QPainter(&bitmap);
-        paint -> setRenderHints(QPainter::Antialiasing);
+        QPainter paint(&bitmap);
+        paint.setRenderHints(QPainter::Antialiasing);
 
         QColor colPen, colBrush;
         Qt::BrushStyle styleBrush;
@@ -66,12 +66,11 @@ void Element::updateBitmap() {
             colBrush = QColor(255, 0, 0);
             styleBrush = Qt::Dense6Pattern;
         }
-        paint->setPen(QPen(colPen));
-        paint->setBrush(QBrush(colBrush, styleBrush));
+        paint.setPen(QPen(colPen));
+        paint.setBrush(QBrush(colBrush, styleBrush));
 
-        paint -> drawPolygon(getRealPoly(175,175));
+        paint.drawPolygon(getRealPoly(175,175));
         isChanged = false;
-        delete paint;
     }
 }
 

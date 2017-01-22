@@ -105,7 +105,7 @@ void Canvas::mouseMoveEvent(QMouseEvent *event) {
 
 void Canvas::wheelEvent(QWheelEvent *event) {
     if(actualEl != nullptr) {
-        int rot_val = event->delta() / 8;
+        int rot_val = event->delta() / 16;
 
         dragEl->rotateRight(rot_val);
         if(event->buttons() | Qt::MidButton) {
@@ -130,6 +130,7 @@ void Canvas::keyPressEvent(QKeyEvent *event) {
         }
 
         dragEl->setValid(elementPositionValid(*dragEl));
+        dragDiffVec = actualEl->centerPoint() - dragPos;
         repaint();
     }
 }
