@@ -15,6 +15,16 @@ Element::Element(ElType typ, QPointF centerPoint, const QPolygonF& points,
     updateBitmap();
 }
 
+
+Element::Element(int typ, QPointF centerPoint, const QPolygonF points,
+                 qreal rotation, bool mirror, bool mirrorable, qreal rotation_max) :
+    typ(static_cast<ElType>(typ)), centerPoint(centerPoint), points(points), rotation(rotation), mirror(mirror), mirrorable(mirrorable), rotation_max(rotation_max) {
+    isChanged = true;
+    bitmap = QPixmap(350, 350);
+    bitmap.fill(QColor(0,0,0,0));
+    updateBitmap();
+}
+
 QPolygonF Element::getRealPoly(qreal x, qreal y) const {
     QTransform trans;
     trans.translate(x,y);

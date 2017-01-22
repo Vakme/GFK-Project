@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>509</height>
+    <height>511</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -67,7 +67,7 @@
         </widget>
        </item>
        <item row="0" column="0">
-        <widget class="QWidget" name="widget" native="true">
+        <widget class="Panel" name="panel" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
            <horstretch>0</horstretch>
@@ -178,6 +178,12 @@
    <class>ShapesList</class>
    <extends>QWidget</extends>
    <header>shapeslist.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Panel</class>
+   <extends>QWidget</extends>
+   <header>panel.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

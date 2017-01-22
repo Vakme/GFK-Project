@@ -9,6 +9,7 @@
 #include "utils.h"
 #include "element.h"
 #include "dragdrop.h"
+#include "panel.h"
 
 class Canvas : public QWidget
 {
@@ -30,6 +31,8 @@ public slots:
 private:
     utils::unique_vector<Element> elementsOnCanvas;
     Element* actualEl;
+    void SaveXMLFile();
+    Panel *panel;
 };
 
 #endif // CANVAS_H

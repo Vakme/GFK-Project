@@ -17,14 +17,16 @@ SOURCES += main.cpp\
     canvas.cpp \
     shapeslist.cpp \
     element.cpp \
-    dragdrop.cpp
+    dragdrop.cpp \
+    panel.cpp
 
 HEADERS  += mainwindow.h \
     canvas.h \
     shapeslist.h \
     element.h \
     dragdrop.h \
-    utils.h
+    utils.h \
+    panel.h
 
 FORMS    += mainwindow.ui
 

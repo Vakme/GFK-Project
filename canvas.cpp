@@ -1,6 +1,13 @@
 #include <memory>
+#include<QObject>
+#include <QFile>
+#include <QStringList>
+#include <QTextStream>
+#include <QXmlStreamReader>
+#include <QFileDialog>
 #include "utils.h"
 #include "canvas.h"
+#include "panel.h"
 
 Canvas::Canvas(QWidget *parent) : QWidget(parent),
     elementsOnCanvas(utils::make_unique_vector<Element>(
@@ -9,6 +16,7 @@ Canvas::Canvas(QWidget *parent) : QWidget(parent),
       std::move(std::make_unique<TriangleSmall>(150, 300)),
       std::move(std::make_unique<Rhombus>      (450,  50))
     )) {
+    panel = this->parent()->findChild<Panel*>(QString("panel"));
 }
 
 void Canvas::paintEvent(QPaintEvent *event)
@@ -41,7 +49,15 @@ void Canvas::mousePressEvent(QMouseEvent *event) {
 
 
 void Canvas::keyPressEvent(QKeyEvent *event) {
-    if(actualEl == nullptr)
+    if(event->key() == Qt::Key_O)
+        SaveXMLFile();
+    else if(event->key() == Qt::Key_P) {
+        qDebug() << "JESZCZE DZIAŁA";
+        qDebug() << panel;
+        panel->setCanvasSize(this->width(), this->height());
+        panel->ReadXMLFile();
+    }
+    else if(actualEl == nullptr)
         qDebug() << "nope!";
     else {
         switch (event->key()) {
@@ -79,3 +95,55 @@ void Canvas::keyPressEvent(QKeyEvent *event) {
         repaint();
     }
 }
+
+void Canvas::SaveXMLFile()
+{
+
+    QString filename = QFileDialog::getSaveFileName(this,
+                                       tr("Save Xml"), ".",
+                                       tr("Xml files (*.xml)"));
+
+
+    QFile file(filename);
+    file.open(QIODevice::WriteOnly);
+
+    QXmlStreamWriter xmlWriter(&file);
+    xmlWriter.setAutoFormatting(true);
+    xmlWriter.writeStartDocument();
+
+    xmlWriter.writeStartElement("elements");
+    for(auto & el : elementsOnCanvas) {
+        xmlWriter.writeStartElement("element");
+        xmlWriter.writeTextElement("Type", QString::number(static_cast<int>(el->typ) ));
+        xmlWriter.writeStartElement("CenterPoint");
+        xmlWriter.writeTextElement("x", QString::number(el->centerPoint.x()));
+        xmlWriter.writeTextElement("y", QString::number(el->centerPoint.y()));
+        xmlWriter.writeEndElement();
+        xmlWriter.writeStartElement("Color");
+        xmlWriter.writeTextElement("r", QString::number(el->color.red()));
+        xmlWriter.writeTextElement("g", QString::number(el->color.green()));
+        xmlWriter.writeTextElement("b", QString::number(el->color.blue()));
+        xmlWriter.writeEndElement();
+        xmlWriter.writeTextElement("Rotation",  QString::number(el->getRot()));
+        xmlWriter.writeTextElement("Mirror",  QString::number(el->getMir()));
+
+        xmlWriter.writeStartElement("Points");
+        for(auto & point : el ->getPoly())
+        {
+            xmlWriter.writeStartElement("Point");
+            xmlWriter.writeTextElement("x", QString::number(point.x()));
+            xmlWriter.writeTextElement("y", QString::number(point.y()));
+            xmlWriter.writeEndElement();
+        }
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeEndElement();
+    }
+
+    xmlWriter.writeEndElement();
+    xmlWriter.writeEndDocument();
+
+        file.close();
+}
+
+

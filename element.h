@@ -13,7 +13,6 @@ class Element
 {
 public:
     Element() = delete;
-    Element(const Element & el) = delete;
     bool contains(const QPointF & point) const;
     void draw(QPainter * painter);
 
@@ -30,6 +29,13 @@ public:
     void moveLeft();
     void moveRight();
     void mirrorEl();
+
+    QPolygonF getPoly() { return points; }
+    qreal getRot() { return rotation; }
+    bool getMir() { return mirror; }
+
+    //możesz mnie za to zabić.
+    Element(int typ, QPointF centerPoint, const QPolygonF points, qreal rotation, bool mirror, bool mirrorable, qreal rotation_max);
 
 protected:
     Element(ElType typ, QPointF centerPoint, const QPolygonF& points,
