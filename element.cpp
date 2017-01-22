@@ -1,3 +1,4 @@
+#include <cmath>
 #include "element.h"
 #include <QTransform>
 
@@ -110,11 +111,13 @@ void Element::draw(QPainter * painter) {
 
 void Element::rotateLeft() {
     rotation -= 1;
+    reduceRotation();
     isChanged = true;
 }
 
 void Element::rotateRight() {
     rotation += 1;
+    reduceRotation();
     isChanged = true;
 }
 
@@ -140,6 +143,18 @@ void Element::moveRight() {
 void Element::mirrorEl() {
     if(mirrorable) {
         mirror = !mirror;
-        isChanged = true;
+    }
+    else {
+        rotation *= -1;
+        reduceRotation();
+    }
+    isChanged = true;
+}
+
+void Element::reduceRotation() {
+    rotation = fmod(rotation, rotation_max);
+    // fmod returns x in range <-rotation_max, rotation_max>
+    if(rotation < 0) {
+        rotation = rotation + rotation_max;
     }
 }

@@ -37,6 +37,7 @@ protected:
 
 private:
     void updateBitmap();
+    void reduceRotation();
     static QColor nextColor();
 
     const QPolygonF points;
