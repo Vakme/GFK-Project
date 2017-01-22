@@ -3,9 +3,9 @@
 #include <QTransform>
 
 
-Element::Element(ElType typ, QPointF centerPoint, const QPolygonF& points,
+Element::Element(ElType typ, QPointF center, const QPolygonF& points,
                  qreal rotation_max, bool mirrorable) :
-    typ(typ), centerPoint(centerPoint), color(nextColor()),
+    typ(typ), _centerPoint(center), color(nextColor()),
     rotation_max(rotation_max), mirrorable(mirrorable), points(points)
 {
     rotation = 0;
@@ -24,6 +24,10 @@ QPolygonF Element::getRealPoly(qreal x, qreal y) const {
         trans = QTransform(-1, 0, 0, 0, 1, 0, 0, 0, 1) * trans;
     }
     return trans.map(points);
+}
+
+QPolygonF Element::getRealPoly() const {
+    return getRealPoly(_centerPoint.x(), _centerPoint.y());
 }
 
 void Element::updateBitmap() {
@@ -99,56 +103,69 @@ QColor Element::nextColor() {
 }
 
 
+QPointF Element::centerPoint() {
+    return _centerPoint;
+}
+
+void Element::setCenterPoint(QPointF center) {
+    _centerPoint = center;
+    isChanged = true;
+}
+
 bool Element::contains(const QPointF & point) const {
-    return getRealPoly(centerPoint.x(), centerPoint.y()).containsPoint(point, Qt::OddEvenFill);
+    return getRealPoly().containsPoint(point, Qt::OddEvenFill);
 }
 
 void Element::draw(QPainter * painter) {
     updateBitmap();
-    painter->drawPixmap(centerPoint - QPoint(175,175), bitmap);
+    painter->drawPixmap(_centerPoint - QPoint(175,175), bitmap);
 }
 
+const QPixmap & Element::getBitmap() {
+    updateBitmap();
+    return bitmap;
+}
 
-void Element::rotateLeft() {
-    rotation -= 1;
+bool Element::intersects(const Element& other) {
+    return ! getRealPoly().intersected(other.getRealPoly()).isEmpty();
+}
+
+void Element::rotateLeft(int val) {
+    rotation -= val;
     reduceRotation();
     isChanged = true;
 }
 
-void Element::rotateRight() {
-    rotation += 1;
+void Element::rotateRight(int val) {
+    rotation += val;
     reduceRotation();
     isChanged = true;
 }
 
-void Element::moveUp() {
-    centerPoint -= QPointF(0, 1);
+void Element::moveUp(int val) {
+    _centerPoint -= QPointF(0, val);
     isChanged = true;
 }
 
-void Element::moveDown() {
-    centerPoint += QPointF(0, 1);
+void Element::moveDown(int val) {
+    _centerPoint += QPointF(0, val);
     isChanged = true;
 }
 
-void Element::moveLeft() {
-    centerPoint -= QPointF(1, 0);
+void Element::moveLeft(int val) {
+    _centerPoint -= QPointF(val, 0);
     isChanged = true;
 }
-void Element::moveRight() {
-    centerPoint += QPointF(1, 0);
+void Element::moveRight(int val) {
+    _centerPoint += QPointF(val, 0);
     isChanged = true;
 }
 
 void Element::mirrorEl() {
     if(mirrorable) {
         mirror = !mirror;
+        isChanged = true;
     }
-    else {
-        rotation *= -1;
-        reduceRotation();
-    }
-    isChanged = true;
 }
 
 void Element::reduceRotation() {

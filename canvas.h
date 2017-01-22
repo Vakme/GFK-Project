@@ -15,7 +15,7 @@ class Canvas : public QWidget
     Q_OBJECT
 public:
     explicit Canvas(QWidget *parent = 0);
-    void mousePressEvent(QMouseEvent *event);
+    bool elementPositionValid(Element *nel);
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -30,6 +30,14 @@ public slots:
 private:
     utils::unique_vector<Element> elementsOnCanvas;
     Element* actualEl;
+    bool onDrag;
+    QPointF dragPos;
+    QPointF dragDiffVec;
+
+    void startDrag(QPoint pos, std::unique_ptr<Element>& el);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 };
 
 #endif // CANVAS_H

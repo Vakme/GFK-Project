@@ -1,3 +1,5 @@
+#include <QDrag>
+#include <QMouseEvent>
 #include <memory>
 #include "utils.h"
 #include "canvas.h"
@@ -9,12 +11,13 @@ Canvas::Canvas(QWidget *parent) : QWidget(parent),
       std::move(std::make_unique<TriangleSmall>(150, 300)),
       std::move(std::make_unique<Rhombus>      (450,  50))
     )) {
+
+    onDrag = false;
 }
 
 void Canvas::paintEvent(QPaintEvent *event)
 {
     QPainter *painter = new QPainter(this);
-    qDebug() << "NOSZRYSUJ";
     for(auto& element : elementsOnCanvas) {
         element->draw(painter);
     }
@@ -22,60 +25,95 @@ void Canvas::paintEvent(QPaintEvent *event)
 }
 
 void Canvas::mousePressEvent(QMouseEvent *event) {
-    for(auto& v : elementsOnCanvas) {
-        qDebug() << "(next)";
-        if(v->contains(event->pos())) {
-            actualEl = &*v;
-            //qDebug() << event->pos() << " on " << static_cast<int>(v->typ);
-            DragDrop drop(this);
-            drop.mousePressEvent(event, actualEl, QString("canvas"));
-            return;
+    if(event->button() == Qt::LeftButton) {
+        for(auto& el : elementsOnCanvas) {
+            if(el->contains(event->pos())) {
+                actualEl = el.get();
+                dragPos = event->pos();
+                dragDiffVec = actualEl->centerPoint() - dragPos;
+                onDrag = true;
+                return;
+            }
+        }
+        actualEl = nullptr;
+    }
+}
+
+void Canvas::mouseReleaseEvent(QMouseEvent *event) {
+    actualEl = nullptr;
+    onDrag = false;
+}
+
+bool Canvas::elementPositionValid(Element *nel) {
+    bool is_ok = true;
+    for(auto& el : elementsOnCanvas) {
+        if(el.get() != nel && nel->intersects(*el)) {
+            is_ok = false;
+            break;
         }
     }
-    actualEl = nullptr;
-    qDebug() << "NoPe! " << event->pos();
+    return is_ok;
+}
 
-    DragDrop drop(this);
-    drop.mousePressEvent(event, actualEl, QString("canvas"));
+void Canvas::mouseMoveEvent(QMouseEvent *event) {
+    if(onDrag) {
+        dragPos = event->pos();
+        QPointF oldPos = actualEl->centerPoint();
+        actualEl->setCenterPoint(event->pos() + dragDiffVec);
+
+        if(elementPositionValid(actualEl)) {
+            repaint();
+        }
+        else {
+            actualEl->setCenterPoint(oldPos);
+            dragDiffVec = actualEl->centerPoint() - dragPos;
+        }
+    }
+}
+
+void Canvas::keyPressEvent(QKeyEvent *event) {
+    if(actualEl != nullptr) {
+        QPointF oldPos = actualEl->centerPoint();
+        actualEl->setCenterPoint(dragPos + dragDiffVec);
+        switch (event->key()) {
+            case Qt::Key_R:  actualEl->rotateRight();  break;
+            case Qt::Key_E:  actualEl->rotateLeft ();  break;
+            case Qt::Key_W:  actualEl->moveUp     ();  break;
+            case Qt::Key_S:  actualEl->moveDown   ();  break;
+            case Qt::Key_A:  actualEl->moveLeft   ();  break;
+            case Qt::Key_D:  actualEl->moveRight  ();  break;
+            case Qt::Key_M:  actualEl->mirrorEl   ();  break;
+        }
+
+        if(elementPositionValid(actualEl)) {
+            repaint();
+            dragDiffVec = actualEl->centerPoint() - dragPos;
+        }
+        else {
+            actualEl->setCenterPoint(oldPos);
+            switch (event->key()) {
+                case Qt::Key_R:  actualEl->rotateLeft ();  break;
+                case Qt::Key_E:  actualEl->rotateRight();  break;
+                case Qt::Key_W:  actualEl->moveDown   ();  break;
+                case Qt::Key_S:  actualEl->moveUp     ();  break;
+                case Qt::Key_A:  actualEl->moveRight  ();  break;
+                case Qt::Key_D:  actualEl->moveLeft   ();  break;
+                case Qt::Key_M:  actualEl->mirrorEl   ();  break;
+            }
+        }
+    }
 }
 
 
-void Canvas::keyPressEvent(QKeyEvent *event) {
-    if(actualEl == nullptr)
-        qDebug() << "nope!";
-    else {
-        switch (event->key()) {
-        case Qt::Key_R:
-            qDebug() << "R";
-            actualEl -> rotateRight();
-            break;
-        case Qt::Key_E:
-            qDebug() << "E";
-            actualEl -> rotateLeft();
-            break;
-        case Qt::Key_W:
-            qDebug() << "W";
-            actualEl -> moveUp();
-            break;
-        case Qt::Key_S:
-            qDebug() << "S";
-            actualEl -> moveDown();
-            break;
-        case Qt::Key_A:
-            qDebug() << "A";
-            actualEl -> moveLeft();
-            break;
-        case Qt::Key_D:
-            qDebug() << "D";
-            actualEl -> moveRight();
-            break;
-        case Qt::Key_M:
-            qDebug() << "M";
-            actualEl -> mirrorEl();       //Funkcja do odwracania jest gotowa, ale nie stestowana, a ja ledwo na oczy patrzę, jutro skończymy
-            break;
-        default:
-            break;
-        }
-        repaint();
-    }
+
+void Canvas::startDrag(QPoint pos, std::unique_ptr<Element>& el) {
+    QDrag *drag = new QDrag(this);
+    QMimeData *mimeData = new QMimeData;
+
+    mimeData->setText("Kabum!");
+    drag->setMimeData(mimeData);
+    drag->setPixmap(el->getBitmap());
+    drag->setHotSpot((pos - el->centerPoint() + QPoint(175,175)).toPoint());
+
+    Qt::DropAction dropAction = drag->exec();
 }

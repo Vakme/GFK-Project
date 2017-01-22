@@ -20,16 +20,21 @@ public:
     const ElType typ;
 
     //był const, nie może być, musisz przesuwać obiekt. Jeśli musi być, to wywal, ale przesuwanie na strzałkach nie działa
-    QPointF centerPoint;
+    QPointF centerPoint();
+    void setCenterPoint(QPointF center);
     const QColor color;
     QPolygonF getRealPoly(qreal x, qreal y) const;
-    void rotateLeft();
-    void rotateRight();
-    void moveUp();
-    void moveDown();
-    void moveLeft();
-    void moveRight();
+    QPolygonF getRealPoly() const;
+
+    bool intersects(const Element& other);
+    void rotateLeft (int val = 1);
+    void rotateRight(int val = 1);
+    void moveUp     (int val = 1);
+    void moveDown   (int val = 1);
+    void moveLeft   (int val = 1);
+    void moveRight  (int val = 1);
     void mirrorEl();
+    const QPixmap & getBitmap();
 
 protected:
     Element(ElType typ, QPointF centerPoint, const QPolygonF& points,
@@ -40,6 +45,7 @@ private:
     void reduceRotation();
     static QColor nextColor();
 
+    QPointF _centerPoint;
     const QPolygonF points;
     const qreal rotation_max;
     qreal rotation;
