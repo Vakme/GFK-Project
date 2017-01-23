@@ -2,9 +2,9 @@
 #include "mainwindow.h"
 
 ShapesList::ShapesList(QWidget *parent) : QListWidget(parent) {
-    addElement(std::move(std::make_unique<TriangleMid>(150, 150)));
-    addElement(std::move(std::make_unique<TriangleBig>(250, 250)));
-    addElement(std::move(std::make_unique<TriangleBig>(350, 350)));
+    addElement(std::move(std::make_unique<TriangleMid>  (150, 150)));
+    addElement(std::move(std::make_unique<TriangleSmall>(250, 250)));
+    addElement(std::move(std::make_unique<TriangleBig>  (350, 350)));
 
     connect(this, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(sendToDrag(QListWidgetItem*)));
 }

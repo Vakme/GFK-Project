@@ -43,6 +43,11 @@ private:
     void resetCursorMode();
     void selectRect(const QRectF & rec);
 
+    void getBestFit();
+    static qreal getAngle(const QVector2D & a, const QVector2D & b);
+    qreal findMinLen(Element **them, QPolygonF *their_poly, int *their_idx,
+                                     QPolygonF *our_poly,   int *our_idx  ) const;
+
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
