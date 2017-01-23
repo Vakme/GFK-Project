@@ -112,22 +112,13 @@ void Canvas::SaveXMLFile()
 
     xmlWriter.writeStartElement("elements");
     for(auto & el : elementsOnCanvas) {
-        xmlWriter.writeStartElement("element");
+        xmlWriter.writeEmptyElement("element");
         xmlWriter.writeAttribute("Type", QString::number(static_cast<int>(el->typ) ));
         xmlWriter.writeAttribute("Rotation",  QString::number(el->getRot()));
         xmlWriter.writeAttribute("x", QString::number(el->centerPoint.x()));
         xmlWriter.writeAttribute("y", QString::number(el->centerPoint.y()));
         if(el->getMirable())
             xmlWriter.writeAttribute("Mirror",  QString::number(el->getMir()));
-
-        for(auto & point : el ->getPoly())
-        {
-            xmlWriter.writeEmptyElement("Point");
-            xmlWriter.writeAttribute("x", QString::number(point.x()));
-            xmlWriter.writeAttribute("y", QString::number(point.y()));
-        }
-
-        xmlWriter.writeEndElement();
     }
 
     xmlWriter.writeEndElement();

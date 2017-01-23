@@ -1,5 +1,5 @@
 #include "panel.h"
-
+#include "utils.h"
 #include <QFile>
 #include <QStringList>
 #include <QTextStream>
@@ -8,12 +8,12 @@
 
 Panel::Panel(QWidget *parent) : QWidget(parent)
 {
-    this->elementsOnPanel = std::vector<Element*>();
+    this->elementsOnPanel = utils::unique_vector<Element>();
 }
 
 Panel::Panel(int width, int height, QWidget *parent) : cwidth(width), cheight(height), QWidget(parent)
 {
-    elementsOnPanel = std::vector<Element*>();
+    this->elementsOnPanel = utils::unique_vector<Element>();
 }
 
 void Panel::paintEvent(QPaintEvent *event)
@@ -26,7 +26,7 @@ void Panel::paintEvent(QPaintEvent *event)
     painter -> setRenderHints(QPainter::Antialiasing);
     painter -> setPen(QPen());
     for(auto& element : elementsOnPanel) {
-        painter -> setBrush(QBrush(element->color));
+        painter -> setBrush(QBrush(QColor(0,0,0)));
         painter -> drawPolygon(element->getRealPoly(element->centerPoint.x(),element->centerPoint.y()));
     }
     float scale = ((float)cwidth)/this->width();
@@ -72,7 +72,12 @@ qDebug() << "Opened";
     while(!Rxml.atEnd())
     {
 
-        elementsOnPanel.push_back(Element::checkXML(Rxml));
+        if(Rxml.name() == "element" && Rxml.isStartElement())
+        {
+
+            qDebug() << "element";
+            elementsOnPanel.push_back(Element::checkXML(Rxml));
+        }
         Rxml.readNext();
 
     }

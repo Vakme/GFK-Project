@@ -7,6 +7,7 @@
 #include <QtGui>
 #include <memory>
 #include"element.h"
+#include "utils.h"
 
 class Panel : public QWidget
 {
@@ -16,7 +17,7 @@ public:
     Panel(int width, int height, QWidget *parent = 0);
     void ReadXMLFile();
     void setCanvasSize(int width, int height) {cwidth = width; cheight = height;}
-    std::vector<Element*> elementsOnPanel;
+    utils::unique_vector<Element> elementsOnPanel;
 
 protected:
     void paintEvent(QPaintEvent *event);

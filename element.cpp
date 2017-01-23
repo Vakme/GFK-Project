@@ -1,6 +1,6 @@
 #include "element.h"
 #include <QTransform>
-
+#include<memory>
 #include <QStringList>
 #include <QTextStream>
 #include <QXmlStreamReader>
@@ -151,104 +151,74 @@ void Element::moveRight() {
 }
 
 void Element::mirrorEl() {
-    if(mirrorable) {
+    if(mirrorable)
         mirror = !mirror;
-        isChanged = true;
-    }
+
+    isChanged = true;
 }
 
 
 
-Element *Element::checkXML(QXmlStreamReader &Rxml) {
+std::unique_ptr<Element> Element::checkXML(QXmlStreamReader &Rxml) {
 
     qreal rotation = 0, rotation_max = 360;
     bool mirror = false, mirrorable = false;
     int typ = 1;
     float x = 0, y = 0;
-    QPointF centPoint = QPointF(0,0);
-    int r = 0, g = 0, b = 0;
     QVector<QPointF> pointVec;
 
     QXmlStreamAttributes attrs;
 
-    while((Rxml.name() != "element" && !Rxml.isEndElement())) {
-//    if(Rxml.name() == "element")
-    if(Rxml.name() == "Rotation") {
-            rotation = Rxml.readElementText().toDouble();
-            qDebug() << QString::number(rotation);
-    }
-    else if(Rxml.name() == "Mirror") {
-            mirror = Rxml.readElementText().toInt();
-            qDebug() << QString::number(mirror);
-    }
-    else if(Rxml.name() == "Type") {
-            typ = Rxml.readElementText().toInt();
-            qDebug() << QString::number(typ);
-    }
-    else if(Rxml.name() == "CenterPoint") {
-        Rxml.readNext();
-        while(Rxml.name() != "CenterPoint" && !Rxml.isEndElement()) {
-            if(Rxml.name() == "x")
-                x = Rxml.readElementText().toFloat();
-            else if(Rxml.name() == "y")
-                y = Rxml.readElementText().toFloat();
-
-            Rxml.readNext();
+        qDebug() << "Inside element";
+    if(Rxml.name() == "element") {
+        attrs = Rxml.attributes();
+        if(attrs.hasAttribute("Type") && attrs.hasAttribute("Rotation") && attrs.hasAttribute("x") && attrs.hasAttribute("y"))
+        {
+            typ = attrs.value("Type").toInt();
+            rotation = attrs.value("Rotation").toDouble();
+            x = attrs.value("x").toInt();
+            y = attrs.value("y").toInt();
+            if(attrs.hasAttribute("Mirror"))
+                mirror = Rxml.readElementText().toInt();
+            else
+                mirror = false;
         }
-        centPoint.setX(x);
-        centPoint.setY(y);
-        qDebug() << "CPoint(" << QString::number(x) << ", " << QString::number(y) << ")";
-    }
-    else if(Rxml.name() == "Color") {
+        else
+            qDebug() << "Invalid file";
+
         Rxml.readNext();
-        while(Rxml.name() != "Color" && !Rxml.isEndElement()) {
-            if(Rxml.name() == "r")
-                r = Rxml.readElementText().toInt();
-            else if(Rxml.name() == "g")
-                g = Rxml.readElementText().toInt();
-            else if(Rxml.name() == "b")
-                b = Rxml.readElementText().toInt();
-
+        qDebug() << Rxml.name();
+        /*while(!Rxml.isEndElement()) {
+            qDebug() << Rxml.attributes().value("x") << " " << Rxml.attributes().value("y");
+            if(Rxml.name() == "Point" && Rxml.attributes().hasAttribute("x") &&  Rxml.attributes().hasAttribute("y"))
+                pointVec.push_back(QPointF(Rxml.attributes().value("x").toFloat(), Rxml.attributes().value("y").toFloat()));
             Rxml.readNext();
-        }
-        qDebug() << "Color(" << QString::number(r) << ", " << QString::number(g) << ", " << QString::number(b) << ")";
-
+        }*/
     }
-
-    else if(Rxml.name() == "Points") {
-        pointVec.clear();
-        Rxml.readNext();
-        while(Rxml.name() != "Points" && !Rxml.isEndElement()) {
-            if(Rxml.name() == "Point") {
-                        Rxml.readNext();
-                        while(Rxml.name() != "Point" && !Rxml.isEndElement()) {
-                            if(Rxml.name() == "x")
-                                x = Rxml.readElementText().toFloat();
-                            else if(Rxml.name() == "y")
-                                y = Rxml.readElementText().toFloat();
-
-                            Rxml.readNext();
-                        }
-                        pointVec.push_back(QPointF(x, y));
-                        qDebug() << "Point(" << QString::number(x) << ", " << QString::number(y) << ")";
-                    }
-
-            Rxml.readNext();
-        }
+    if(static_cast<ElType>(typ) == ElType::TRIANGLE_BIG) {
+        auto elPtr = std::move(std::make_unique<TriangleBig>(x, y));
+        elPtr -> rotation = rotation;
+        return elPtr;
     }
-    Rxml.readNext();
+    else if(static_cast<ElType>(typ) == ElType::TRIANGLE_MID) {
+        auto elPtr = std::move(std::make_unique<TriangleMid>(x, y));
+        elPtr -> rotation = rotation;
+        return elPtr;
     }
-    if(typ == 5) {
-        mirrorable = true;
-        rotation_max = 180;
+    else if(static_cast<ElType>(typ) == ElType::TRIANGLE_SMALL) {
+        auto elPtr = std::move(std::make_unique<TriangleSmall>(x, y));
+        elPtr -> rotation = rotation;
+        return elPtr;
     }
-    else if(typ == 4) {
-        mirrorable = false;
-        rotation_max = 90;
+    else if(static_cast<ElType>(typ) == ElType::SQUARE) {
+        auto elPtr = std::move(std::make_unique<Square>(x, y));
+        elPtr -> rotation = rotation;
+        return elPtr;
     }
-    else {
-        rotation_max = 360;
-        mirrorable = false;
+    else if(static_cast<ElType>(typ) == ElType::RHOMBUS) {
+        auto elPtr = std::move(std::make_unique<Rhombus>(x, y));
+        elPtr -> rotation = rotation;
+        elPtr -> mirror = mirror;
+        return elPtr;
     }
-    return new Element(typ, centPoint, QPolygonF(pointVec), rotation, mirror, mirrorable, rotation_max);
 }

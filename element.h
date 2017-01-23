@@ -6,7 +6,7 @@
 #include <QPainter>
 #include <QBitmap>
 #include <QtDebug>
-
+#include<memory>
 #include <QXmlStreamReader>
 enum class ElType { TRIANGLE_BIG, TRIANGLE_MID, TRIANGLE_SMALL, SQUARE, RHOMBUS };
 
@@ -16,7 +16,7 @@ public:
     Element() = delete;
     bool contains(const QPointF & point) const;
     void draw(QPainter * painter);
-    static Element *checkXML(QXmlStreamReader& Rxml);
+    static std::unique_ptr<Element> checkXML(QXmlStreamReader& Rxml);
     const ElType typ;
 
     //był const, nie może być, musisz przesuwać obiekt. Jeśli musi być, to wywal, ale przesuwanie na strzałkach nie działa
