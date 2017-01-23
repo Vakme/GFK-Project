@@ -40,43 +40,43 @@ Element& Element::operator =(Element && el) {
 template<>
 Square::ElementKind(QPointF centerPoint) :
     ElementKindBase(centerPoint, QVector<QPointF>{
-                        QPointF( 50, -50),
-                        QPointF(-50, -50),
-                        QPointF(-50,  50),
-                        QPointF( 50,  50)
+                        QPointF(  50.00, -50.00),
+                        QPointF( -50.00, -50.00),
+                        QPointF( -50.00,  50.00),
+                        QPointF(  50.00,  50.00)
                     }, 90) {}
 
 template<>
 TriangleSmall::ElementKind(QPointF centerPoint) :
     ElementKindBase(centerPoint, QVector<QPointF>{
-                        QPointF( -71, -23),
-                        QPointF(  71, -23),
-                        QPointF(   0,  47)
+                        QPointF( -70.71, -23.57),
+                        QPointF(  70.71, -23.57),
+                        QPointF(   0.00,  47.14)
                     }) {}
 
 template<>
 TriangleMid::ElementKind(QPointF centerPoint) :
     ElementKindBase(centerPoint, QVector<QPointF>{
-                        QPointF( -100, -33),
-                        QPointF(  100, -33),
-                        QPointF(   0,   66)
+                        QPointF(-100.00, -33.33),
+                        QPointF( 100.00, -33.33),
+                        QPointF(   0.00,  66.67)
                     }) {}
 
 template<>
 TriangleBig::ElementKind(QPointF centerPoint) :
     ElementKindBase(centerPoint, QVector<QPointF>{
-                        QPointF(-141, -47),
-                        QPointF( 141, -47),
-                        QPointF(   0,  94)
+                        QPointF(-141.42, -47.14),
+                        QPointF( 141.42, -47.14),
+                        QPointF(   0.00,  94.28)
                     }) {}
 
 template<>
 Rhombus::ElementKind(QPointF centerPoint) :
     ElementKindBase(centerPoint, QVector<QPointF>{
-                        QPointF( -75, -25),
-                        QPointF(  25, -25),
-                        QPointF(  75,  25),
-                        QPointF( -25,  25)
+                        QPointF(-106.07, -35.36),
+                        QPointF(  35.36, -35.36),
+                        QPointF( 106.07,  35.36),
+                        QPointF( -35.36,  35.36)
                     }, 180, true) {}
 
 
