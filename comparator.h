@@ -10,7 +10,7 @@ public:
     Comparator() = delete;
     Comparator(const Comparator &) = delete;
     static bool compareElement(Element * cElement, Element * pElement);
-    static void compare(utils::unique_vector<Element> & elementsOnPanel, utils::unique_vector<Element> & elementsOnCanvas);
+    static void compareElems(utils::unique_vector<Element> & elementsOnPanel, utils::unique_vector<Element> & elementsOnCanvas);
 };
 
 #endif // COMPARATOR_H

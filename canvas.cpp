@@ -57,7 +57,7 @@ void Canvas::keyPressEvent(QKeyEvent *event) {
         panel->ReadXMLFile();
     }
     else if(event->key() == Qt::Key_C) {
-        Comparator::compare(panel->elementsOnPanel, elementsOnCanvas);
+        Comparator::compareElems(panel->elementsOnPanel, elementsOnCanvas);
     }
     else if(actualEl == nullptr)
         qDebug() << "nope!";
