@@ -8,7 +8,7 @@
 #include <QtDebug>
 #include<memory>
 #include <QXmlStreamReader>
-enum class ElType { TRIANGLE_BIG, TRIANGLE_MID, TRIANGLE_SMALL, SQUARE, RHOMBUS };
+enum class ElType { SQUARE, TRIANGLE_BIG, TRIANGLE_MID, TRIANGLE_SMALL, RHOMBUS };
 
 class Element
 {

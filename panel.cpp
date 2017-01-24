@@ -27,7 +27,7 @@ void Panel::paintEvent(QPaintEvent *event)
     painter -> setPen(QPen());
     for(auto& element : elementsOnPanel) {
         qDebug() << "DRAW: " << static_cast<int>(element->typ) << "x: " << element->centerPoint().x() << " y: " << element->centerPoint().y();
-        painter -> setBrush(element->color);
+        painter -> setBrush(QColor(0,0,0));
         painter -> drawPolygon(element->getRealPoly());
     }
     float scale = ((float)cwidth)/this->width();

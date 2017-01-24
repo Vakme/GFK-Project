@@ -55,7 +55,7 @@ void Comparator::compareElems(utils::unique_vector<Element> & elementsOnPanel, u
                     i++;
                 }
                 else
-                    elPDiffs.push_back(fabs(elC->centerPoint().manhattanLength() - elementsOnPanel.at(i)->centerPoint().manhattanLength()));
+                    elPDiffs.push_back(fabs(elP->centerPoint().manhattanLength() - elementsOnPanel.at(i)->centerPoint().manhattanLength()));
             }
 
             for(int i=1; i < elementsOnCanvas.size(); i++) {
@@ -70,8 +70,8 @@ void Comparator::compareElems(utils::unique_vector<Element> & elementsOnPanel, u
                     elCDiffs.push_back(fabs(elC->centerPoint().manhattanLength() - elementsOnCanvas.at(i)->centerPoint().manhattanLength()));
             }
             for(int i = 0; i < elCDiffs.size(); i++) {
-                if(fabs(elCDiffs.at(i) - elPDiffs.at(i)) > 5) {
-                    qDebug() << "Elementy położone inaczej względem siebie";
+                if(fabs(elCDiffs.at(i) - elPDiffs.at(i)) > 10) {
+                    qDebug() << "Elementy położone inaczej względem siebie" << i << " " << elCDiffs.at(i) << " " << elPDiffs.at(i);
                     areEqual = false;
                 }
             }

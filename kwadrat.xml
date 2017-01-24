@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<elements>
+    <element Type="4" Rotation="90" x="358.071" y="222.93" Mirror="0"/>
+    <element Type="3" Rotation="180" x="181.29" y="376.13"/>
+    <element Type="1" Rotation="0" x="252" y="164"/>
+    <element Type="0" Rotation="45" x="252.001" y="328.99"/>
+    <element Type="1" Rotation="270" x="157.72" y="258.28"/>
+    <element Type="2" Rotation="315" x="346.289" y="352.569"/>
+    <element Type="3" Rotation="90" x="299.141" y="258.28"/>
+</elements>
