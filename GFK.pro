@@ -18,7 +18,8 @@ SOURCES += main.cpp\
     shapeslist.cpp \
     element.cpp \
     dragdrop.cpp \
-    panel.cpp
+    panel.cpp \
+    comparator.cpp
 
 HEADERS  += mainwindow.h \
     canvas.h \
@@ -26,7 +27,8 @@ HEADERS  += mainwindow.h \
     element.h \
     dragdrop.h \
     utils.h \
-    panel.h
+    panel.h \
+    comparator.h
 
 FORMS    += mainwindow.ui
 

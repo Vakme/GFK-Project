@@ -24,12 +24,13 @@ protected:
 public:
     void keyPressEvent(QKeyEvent *event);
 
+    utils::unique_vector<Element> elementsOnCanvas;
+
 signals:
 
 public slots:
 
 private:
-    utils::unique_vector<Element> elementsOnCanvas;
     Element* actualEl;
     void SaveXMLFile();
     Panel *panel;
