@@ -16,7 +16,7 @@
 Canvas::Canvas(QWidget *parent) : QWidget(parent),
     elementsOnCanvas(utils::make_unique_vector<Element>(
       std::move(std::make_unique<Square>       (150,  50)),
-      std::move(std::make_unique<TriangleMid>  (150, 200)),
+      std::move(std::make_unique<TriangleBig>  (150, 200)),
       std::move(std::make_unique<TriangleSmall>(150, 300)),
       std::move(std::make_unique<Rhombus>      (450,  50))
     )) {
@@ -320,8 +320,8 @@ void Canvas::SaveXMLFile()
         xmlWriter.writeEmptyElement("element");
         xmlWriter.writeAttribute("Type", QString::number(static_cast<int>(el->typ) ));
         xmlWriter.writeAttribute("Rotation",  QString::number(el->getRot()));
-        xmlWriter.writeAttribute("x", QString::number(el->centerPoint.x()));
-        xmlWriter.writeAttribute("y", QString::number(el->centerPoint.y()));
+        xmlWriter.writeAttribute("x", QString::number(el->centerPoint().x()));
+        xmlWriter.writeAttribute("y", QString::number(el->centerPoint().y()));
         if(el->getMirable())
             xmlWriter.writeAttribute("Mirror",  QString::number(el->getMir()));
     }

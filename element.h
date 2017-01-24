@@ -23,6 +23,8 @@ public:
 
     const ElType typ;
 
+    static std::unique_ptr<Element> checkXML(QXmlStreamReader &Rxml);
+
     //był const, nie może być, musisz przesuwać obiekt. Jeśli musi być, to wywal, ale przesuwanie na strzałkach nie działa
     QPointF centerPoint() const;
     void setCenterPoint(QPointF center);

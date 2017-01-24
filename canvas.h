@@ -18,7 +18,6 @@ class Canvas : public QWidget
     Q_OBJECT
 public:
     explicit Canvas(QWidget *parent = 0);
-    void mousePressEvent(QMouseEvent *event);
     bool elementPositionValid(const Element & nel);
 
 protected:

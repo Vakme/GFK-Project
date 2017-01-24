@@ -48,26 +48,26 @@ void Comparator::compareElems(utils::unique_vector<Element> & elementsOnPanel, u
             }
             for(int i=1; i < elementsOnPanel.size(); i++) {
                 if(i+1 < elementsOnPanel.size() && elementsOnPanel.at(i)->typ == elementsOnPanel.at(i+1)->typ) {
-                    elPDiffs.push_back(fabs(elP->centerPoint.manhattanLength()
-                                            - elementsOnPanel.at(i)->centerPoint.manhattanLength())
-                                       + fabs(elP->centerPoint.manhattanLength()
-                                              - elementsOnPanel.at(i+1)->centerPoint.manhattanLength()));
+                    elPDiffs.push_back(fabs(elP->centerPoint().manhattanLength()
+                                            - elementsOnPanel.at(i)->centerPoint().manhattanLength())
+                                       + fabs(elP->centerPoint().manhattanLength()
+                                              - elementsOnPanel.at(i+1)->centerPoint().manhattanLength()));
                     i++;
                 }
                 else
-                    elPDiffs.push_back(fabs(elC->centerPoint.manhattanLength() - elementsOnPanel.at(i)->centerPoint.manhattanLength()));
+                    elPDiffs.push_back(fabs(elC->centerPoint().manhattanLength() - elementsOnPanel.at(i)->centerPoint().manhattanLength()));
             }
 
             for(int i=1; i < elementsOnCanvas.size(); i++) {
                 if(i+1 < elementsOnCanvas.size() && elementsOnCanvas.at(i)->typ == elementsOnCanvas.at(i+1)->typ) {
-                    elCDiffs.push_back(fabs(elC->centerPoint.manhattanLength()
-                                            - elementsOnCanvas.at(i)->centerPoint.manhattanLength())
-                                       + fabs(elC->centerPoint.manhattanLength()
-                                              - elementsOnCanvas.at(i+1)->centerPoint.manhattanLength()));
+                    elCDiffs.push_back(fabs(elC->centerPoint().manhattanLength()
+                                            - elementsOnCanvas.at(i)->centerPoint().manhattanLength())
+                                       + fabs(elC->centerPoint().manhattanLength()
+                                              - elementsOnCanvas.at(i+1)->centerPoint().manhattanLength()));
                     i++;
                 }
                 else
-                    elCDiffs.push_back(fabs(elC->centerPoint.manhattanLength() - elementsOnCanvas.at(i)->centerPoint.manhattanLength()));
+                    elCDiffs.push_back(fabs(elC->centerPoint().manhattanLength() - elementsOnCanvas.at(i)->centerPoint().manhattanLength()));
             }
             for(int i = 0; i < elCDiffs.size(); i++) {
                 if(fabs(elCDiffs.at(i) - elPDiffs.at(i)) > 5) {
@@ -92,11 +92,11 @@ bool Comparator::compareElement(Element * cElement, Element * pElement) {
         qDebug() << "Złe odbicie";
         return false;
     }
-    if(fabs(cElement->getRot()-pElement->getRot()) > 10) {
+    if(fabs(cElement->getRot()-pElement->getRot()) > 30) {
         qDebug() << "Zły kąt";
         return false ;
     }
-    if(fabs(cElement->centerPoint.manhattanLength()-pElement->centerPoint.manhattanLength()) > 50) {
+    if(fabs(cElement->centerPoint().manhattanLength()-pElement->centerPoint().manhattanLength()) > 150) {
         qDebug() << "Prawdopodobnie złe położenie";
         return false;
     }

@@ -21,7 +21,7 @@ Element::Element(ElType typ, QPointF center, const QPolygonF& points,
 
 Element::Element(int typ, QPointF centerPoint, const QPolygonF points,
                  qreal rotation, bool mirror, bool mirrorable, qreal rotation_max) :
-    typ(static_cast<ElType>(typ)), centerPoint(centerPoint), points(points), rotation(rotation), mirror(mirror), mirrorable(mirrorable), rotation_max(rotation_max) {
+    typ(static_cast<ElType>(typ)), _centerPoint(centerPoint), points(points), rotation(rotation), mirror(mirror), mirrorable(mirrorable), rotation_max(rotation_max) {
     isChanged = true;
     bitmap = QPixmap(350, 350);
     bitmap.fill(QColor(0,0,0,0));
@@ -46,20 +46,7 @@ Element& Element::operator =(Element && el) {
     isChanged = true;
     return *this;
 }
-void Element::updateBitmap() {
-    if(isChanged) {
-        bitmap.fill(QColor(0,0,0,0));
 
-        QPainter *paint = new QPainter(&bitmap);
-        paint -> setRenderHints(QPainter::Antialiasing);
-        paint -> setPen(QPen());
-        paint -> setBrush(QBrush(color));
-
-        paint -> drawPolygon(getRealPoly(175,175));
-        isChanged = false;
-        delete paint;
-    }
-}
 
 
 template<>
@@ -143,6 +130,7 @@ QPolygonF Element::getRealPoly() const {
     return getRealPoly(_centerPoint.x(), _centerPoint.y());
 }
 
+
 void Element::updateBitmap() {
     if(isChanged) {
         bitmap.fill(QColor(0,0,0,0));
@@ -169,7 +157,6 @@ void Element::updateBitmap() {
         isChanged = false;
     }
 }
-
 
 QPointF Element::centerPoint() const {
     return _centerPoint;
@@ -270,10 +257,15 @@ std::unique_ptr<Element> Element::checkXML(QXmlStreamReader &Rxml) {
         {
             typ = attrs.value("Type").toInt();
             rotation = attrs.value("Rotation").toDouble();
-            x = attrs.value("x").toInt();
-            y = attrs.value("y").toInt();
-            if(attrs.hasAttribute("Mirror"))
-                mirror = Rxml.readElementText().toInt();
+            x = attrs.value("x").toDouble();
+            y = attrs.value("y").toDouble();
+            if(attrs.hasAttribute("Mirror")) {
+                if(attrs.value("Mirror").toInt() == 1)
+                    mirror = true;
+                else
+                    mirror = false;
+                qDebug() << "mirror: " << Rxml.readElementText().toInt();
+            }
             else
                 mirror = false;
         }
@@ -281,7 +273,7 @@ std::unique_ptr<Element> Element::checkXML(QXmlStreamReader &Rxml) {
             qDebug() << "Invalid file";
 
         Rxml.readNext();
-        qDebug() << Rxml.name();
+        qDebug() << typ;
         /*while(!Rxml.isEndElement()) {
             qDebug() << Rxml.attributes().value("x") << " " << Rxml.attributes().value("y");
             if(Rxml.name() == "Point" && Rxml.attributes().hasAttribute("x") &&  Rxml.attributes().hasAttribute("y"))
