@@ -22,16 +22,22 @@ void Panel::paintEvent(QPaintEvent *event)
     QPixmap pixmap = QPixmap(cwidth, cheight);
     pixmap.fill(QColor(0,0,0,0));
     QPainter *painter = new QPainter(&pixmap);
+#if DEBUG
     qDebug() << "RYSUJNAPANELU";
+#endif
     painter -> setRenderHints(QPainter::Antialiasing);
     painter -> setPen(QPen());
     for(auto& element : elementsOnPanel) {
+#if DEBUG
         qDebug() << "DRAW: " << static_cast<int>(element->typ) << "x: " << element->centerPoint().x() << " y: " << element->centerPoint().y();
+#endif
         painter -> setBrush(QColor(0,0,0));
         painter -> drawPolygon(element->getRealPoly());
     }
     float scale = ((float)cwidth)/this->width();
+#if DEBUG
     qDebug() << "SCALE" << scale << " " << (float)cwidth/scale << " " << (float)cheight/scale;
+#endif
     delete painter;
     QPainter *paintOnPanel = new QPainter(this);
     paintOnPanel -> drawPixmap(0,0,(float)cwidth/scale, (float)cheight/scale, pixmap);
@@ -40,7 +46,9 @@ void Panel::paintEvent(QPaintEvent *event)
 
 void Panel::ReadXMLFile()
 {
+#if DEBUG
     qDebug() << "JESZCZE DZIAŁA WEWNĄTRZ";
+#endif
     QXmlStreamReader Rxml;
 
     QString filename = QFileDialog::getOpenFileName(this,
@@ -68,14 +76,18 @@ void Panel::ReadXMLFile()
         qDebug() << "Error: Cannot read file " << qPrintable(filename)
                   << ": " << qPrintable(file.errorString());
     }
+#if DEBUG
     qDebug() << "Opened";
+#endif
     while(!Rxml.atEnd())
     {
 
         if(Rxml.name() == "element" && Rxml.isStartElement())
         {
 
+#if DEBUG
             qDebug() << "element";
+#endif
             elementsOnPanel.push_back(Element::checkXML(Rxml));
         }
         Rxml.readNext();
@@ -83,6 +95,8 @@ void Panel::ReadXMLFile()
     }
     file.close();
     this->repaint();
+#if DEBUG
     qDebug() << "Closed";
+#endif
 }
 

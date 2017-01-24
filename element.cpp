@@ -249,8 +249,9 @@ std::unique_ptr<Element> Element::checkXML(QXmlStreamReader &Rxml) {
     QVector<QPointF> pointVec;
 
     QXmlStreamAttributes attrs;
-
+#if DEBUG
         qDebug() << "Inside element";
+#endif
     if(Rxml.name() == "element") {
         attrs = Rxml.attributes();
         if(attrs.hasAttribute("Type") && attrs.hasAttribute("Rotation") && attrs.hasAttribute("x") && attrs.hasAttribute("y"))
@@ -264,7 +265,9 @@ std::unique_ptr<Element> Element::checkXML(QXmlStreamReader &Rxml) {
                     mirror = true;
                 else
                     mirror = false;
+#if DEBUG
                 qDebug() << "mirror: " << Rxml.readElementText().toInt();
+#endif
             }
             else
                 mirror = false;
@@ -274,12 +277,6 @@ std::unique_ptr<Element> Element::checkXML(QXmlStreamReader &Rxml) {
 
         Rxml.readNext();
         qDebug() << typ;
-        /*while(!Rxml.isEndElement()) {
-            qDebug() << Rxml.attributes().value("x") << " " << Rxml.attributes().value("y");
-            if(Rxml.name() == "Point" && Rxml.attributes().hasAttribute("x") &&  Rxml.attributes().hasAttribute("y"))
-                pointVec.push_back(QPointF(Rxml.attributes().value("x").toFloat(), Rxml.attributes().value("y").toFloat()));
-            Rxml.readNext();
-        }*/
     }
     if(static_cast<ElType>(typ) == ElType::TRIANGLE_BIG) {
         auto elPtr = std::move(std::make_unique<TriangleBig>(x, y));

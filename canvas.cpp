@@ -83,6 +83,7 @@ void Canvas::resetCursorMode() {
             break;
     }
     cursorMode = CursorMode::None;
+    Comparator::compareElems(panel->elementsOnPanel, elementsOnCanvas);
     repaint();
 }
 
@@ -146,9 +147,6 @@ void Canvas::keyPressEvent(QKeyEvent *event) {
     else if(event->key() == Qt::Key_P) {
         panel->setCanvasSize(this->width(), this->height());
         panel->ReadXMLFile();
-    }
-    else if(event->key() == Qt::Key_C) {
-        Comparator::compareElems(panel->elementsOnPanel, elementsOnCanvas);
     }
     if(actualEl != nullptr) {
         if(event->key() == Qt::Key_X) {

@@ -4,6 +4,9 @@
 #include <vector>
 #include <memory>
 
+/*! \namespace  utils
+ *  \brief  Tools for fixing managing ownership
+ */
 namespace utils {
     template<typename T>
     struct ignore {
