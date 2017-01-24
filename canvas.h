@@ -11,19 +11,22 @@
 #include "dragdrop.h"
 #include "panel.h"
 
+enum class CursorMode { None, Element, Space };
+
 class Canvas : public QWidget
 {
     Q_OBJECT
 public:
     explicit Canvas(QWidget *parent = 0);
     void mousePressEvent(QMouseEvent *event);
+    bool elementPositionValid(const Element & nel);
 
 protected:
     void paintEvent(QPaintEvent *event);
 
 public:
     void keyPressEvent(QKeyEvent *event);
-
+    void acceptForDrag(std::unique_ptr<Element>&& el);
     utils::unique_vector<Element> elementsOnCanvas;
 
 signals:
@@ -31,10 +34,30 @@ signals:
 public slots:
 
 private:
-    Element* actualEl;
     void SaveXMLFile();
     Panel *panel;
     void compare();
+    Element* actualEl;
+    std::unique_ptr<Element> dragEl;  // use std::optional in c++17
+    CursorMode cursorMode;
+    QPointF dragPos;
+    QPointF dragDiffVec;
+    void startDrag(std::unique_ptr<Element>& el, QPointF pos);
+    void revertElemToShapeList();
+    void sendToShapeList(Element* to_send);
+
+    void resetCursorMode();
+    void selectRect(const QRectF & rec);
+
+    void getBestFit();
+    static qreal getAngle(const QVector2D & a, const QVector2D & b);
+    qreal findMinLen(Element **them, QPolygonF *their_poly, int *their_idx,
+                                     QPolygonF *our_poly,   int *our_idx  ) const;
+
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void wheelEvent(QWheelEvent *event);
 };
 
 #endif // CANVAS_H

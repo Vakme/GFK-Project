@@ -7,13 +7,29 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    _canvas = findChild<Canvas*>("canvas");
+    _shapesList = findChild<ShapesList*>("shapesList");
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     delete ui;
 }
 
+std::unique_ptr<MainWindow> MainWindow::_main;
+
+MainWindow * MainWindow::main() {
+    if(_main == nullptr) {
+        _main = std::make_unique<MainWindow>();
+    }
+    return _main.get();
+}
+Canvas * MainWindow::canvas() const {
+    return _canvas;
+}
+ShapesList * MainWindow::shapesList() const {
+    return _shapesList;
+}
+
 void MainWindow::keyPressEvent(QKeyEvent *event) {
-    this->findChild<Canvas*>("canvas")->keyPressEvent(event);
+    _canvas->keyPressEvent(event);
 }

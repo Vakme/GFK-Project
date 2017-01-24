@@ -1,21 +1,30 @@
 #include "shapeslist.h"
+#include "mainwindow.h"
 
-ShapesList::ShapesList(QWidget *parent) : QWidget(parent)
-{
+ShapesList::ShapesList(QWidget *parent) : QListWidget(parent) {
+    addElement(std::move(std::make_unique<TriangleMid>  (150, 150)));
+    addElement(std::move(std::make_unique<TriangleSmall>(250, 250)));
+    addElement(std::move(std::make_unique<TriangleBig>  (350, 350)));
 
+    connect(this, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(sendToDrag(QListWidgetItem*)));
 }
 
-void ShapesList::paintEvent(QPaintEvent *event)
-{
-    QPainter painter(this);
-
-    //a simple line
-    painter.drawLine(1,1,50,50);
-
+void ShapesList::addElement(std::unique_ptr<Element>&& el) {
+    QIcon icon = el->getBitmap();
+    elementsOnList.push_back(std::move(el));
+    QListWidgetItem *wl = new QListWidgetItem();
+    wl->setIcon(QIcon(icon));
+    addItem(wl);
 }
 
-void ShapesList::mousePressEvent(QMouseEvent *event)
-{
-    DragDrop drop(this);
-    //drop.mousePressEvent(event, QString("shapesList"));
+void ShapesList::sendToDrag(QListWidgetItem* item) {
+    int idx = row(item);
+    delete (item->listWidget()->takeItem(idx));
+    std::unique_ptr<Element> el(std::move(elementsOnList[idx]));
+    elementsOnList.erase(elementsOnList.begin() + idx);
+    MainWindow::main()->canvas()->acceptForDrag(std::move(el));
+}
+
+void ShapesList::acceptForList(std::unique_ptr<Element>&& el) {
+    addElement(std::move(el));
 }
