@@ -16,6 +16,10 @@ Panel::Panel(int width, int height, QWidget *parent) : cwidth(width), cheight(he
     this->elementsOnPanel = utils::unique_vector<Element>();
 }
 
+void Panel::loadFile() {
+    ReadXMLFile();
+}
+
 void Panel::paintEvent(QPaintEvent *event)
 {
     qDebug() << cwidth << " " << cheight;

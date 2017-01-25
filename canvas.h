@@ -31,6 +31,7 @@ public:
 signals:
 
 public slots:
+    void saveFile();
 
 private:
     void SaveXMLFile();

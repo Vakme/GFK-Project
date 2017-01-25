@@ -3,8 +3,11 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow::main()->show();
-
-    return a.exec();
+    QApplication *a = new QApplication(argc, argv);
+    MainWindow *b = MainWindow::main();
+    b->show();
+    int ret = a->exec();
+    delete a;
+    delete b;
+    return ret;
 }

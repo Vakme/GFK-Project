@@ -25,6 +25,10 @@ Canvas::Canvas(QWidget *parent) : QWidget(parent),
     cursorMode = CursorMode::None;
 }
 
+void Canvas::saveFile() {
+    SaveXMLFile();
+}
+
 void Canvas::paintEvent(QPaintEvent *event)
 {
     QPainter *painter = new QPainter(this);

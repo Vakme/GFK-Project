@@ -25,6 +25,7 @@ protected:
 signals:
 
 public slots:
+    void loadFile();
 
 private:
     int cwidth;
