@@ -1,6 +1,9 @@
+/*! \file  panel.h
+    \brief Contains panel for drawing shape to solve.
+*/
+
 #ifndef PANEL_H
 #define PANEL_H
-
 
 #include <QWidget>
 #include <QPainter>
@@ -9,62 +12,56 @@
 #include"element.h"
 #include "utils.h"
 
-/*! \class  Panel
- *  \brief  Displays the sample image in the top left corner
- */
-class Panel : public QWidget
-{
+//! Displays the sample image in the top left corner.
+class Panel : public QWidget {
     Q_OBJECT
 public:
 
+    //! Sets up the panel.
     /*!
-     * \fn      Panel
-     * \brief   Constructor for setting up the panel
-     * \param   parent  Parent object for panel
+      \param   parent  parent object for panel
      */
     explicit Panel(QWidget *parent = 0);
 
+    //! Sets up the panel with width and height.
     /*!
-     * \fn      Panel
-     * \brief   Constructor for setting up the panel
-     * \param   parent  Parent object for panel
-     * \param   width  Canvas width to scale image on Panel
-     * \param   height  Canvas height to scale image on Panel
+      \param   parent  parent object for panel
+      \param   width   canvas width to scale image on panel
+      \param   height  canvas height to scale image on panel
      */
     Panel(int width, int height, QWidget *parent = 0);
 
-    /*!
-     * \fn      ReadXMLFile
-     * \brief   Opens a file dialog, reads XML file and saves elements to elementsOnPanel
-     */
+    //! Opens a file dialog and then reads XML file and loads elements.
     void ReadXMLFile();
 
+    //! Sets generated bitmap size properties.
     /*!
-     * \fn      setCanvasSize
-     * \brief   setter for generated bitmap size properties
-     * \param   width  Canvas width to scale image on Panel
-     * \param   height  Canvas height to scale image on Panel
+      \param   width   canvas width to scale image on panel
+      \param   height  canvas height to scale image on panel
      */
-    void setCanvasSize(int width, int height) {cwidth = width; cheight = height;}
+    void setCanvasSize(int width, int height) { cwidth = width; cheight = height; }
 
+    //! All the puzzle pieces on panel.
     utils::unique_vector<Element> elementsOnPanel;
 
 protected:
 
+    //! Draws the blackened shape to solve.
     /*!
-     * \fn      paintEvent
-     * \brief   Creates bitmap containing all elements and draws it on widget using QPainter
-     * \param   event  QPaintEvent to handle
+      \param   event  event to handle
      */
     void paintEvent(QPaintEvent *event);
 
-signals:
-
 public slots:
+
+    //! Handles load file button signal.
     void loadFile();
 
 private:
+    //! Width of the canvas to resize into panel.
     int cwidth;
+
+    //! Height of the canvas to resize into panel.
     int cheight;
 };
 
