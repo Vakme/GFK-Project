@@ -17,7 +17,6 @@ SOURCES += main.cpp\
     canvas.cpp \
     shapeslist.cpp \
     element.cpp \
-    dragdrop.cpp \
     panel.cpp \
     comparator.cpp
 
@@ -25,11 +24,12 @@ HEADERS  += mainwindow.h \
     canvas.h \
     shapeslist.h \
     element.h \
-    dragdrop.h \
     utils.h \
     panel.h \
     comparator.h
 
 FORMS    += mainwindow.ui
 
+#Jeśli nie działa, usunąć CONFIG += c++14
+CONFIG += std=c++14
 CONFIG += c++14

@@ -22,29 +22,41 @@ void Panel::loadFile() {
 
 void Panel::paintEvent(QPaintEvent *event)
 {
-    qDebug() << cwidth << " " << cheight;
-    QPixmap pixmap = QPixmap(cwidth, cheight);
-    pixmap.fill(QColor(0,0,0,0));
-    QPainter *painter = new QPainter(&pixmap);
-    qDebug() << "RYSUJNAPANELU";
-    painter -> setRenderHints(QPainter::Antialiasing);
-    painter -> setPen(QPen());
-    for(auto& element : elementsOnPanel) {
-        qDebug() << "DRAW: " << static_cast<int>(element->typ) << "x: " << element->centerPoint().x() << " y: " << element->centerPoint().y();
-        painter -> setBrush(QColor(0,0,0));
-        painter -> drawPolygon(element->getRealPoly());
+    if(!elementsOnPanel.empty()) {
+    #if DEBUG
+        qDebug() << cwidth << " " << cheight;
+    #endif
+        QPixmap pixmap = QPixmap(cwidth, cheight);
+        pixmap.fill(QColor(0,0,0,0));
+        QPainter *painter = new QPainter(&pixmap);
+    #if DEBUG
+        qDebug() << "RYSUJNAPANELU";
+    #endif
+        painter -> setRenderHints(QPainter::Antialiasing);
+        painter -> setPen(QPen());
+        for(auto& element : elementsOnPanel) {
+    #if DEBUG
+            qDebug() << "DRAW: " << static_cast<int>(element->typ) << "x: " << element->centerPoint().x() << " y: " << element->centerPoint().y();
+    #endif
+            painter -> setBrush(QColor(0,0,0));
+            painter -> drawPolygon(element->getRealPoly());
+        }
+        float scale = ((float)cwidth)/this->width();
+    #if DEBUG
+        qDebug() << "SCALE" << scale << " " << (float)cwidth/scale << " " << (float)cheight/scale;
+    #endif
+        delete painter;
+        QPainter *paintOnPanel = new QPainter(this);
+        paintOnPanel -> drawPixmap(0,0,(float)cwidth/scale, (float)cheight/scale, pixmap);
+        delete paintOnPanel;
     }
-    float scale = ((float)cwidth)/this->width();
-    qDebug() << "SCALE" << scale << " " << (float)cwidth/scale << " " << (float)cheight/scale;
-    delete painter;
-    QPainter *paintOnPanel = new QPainter(this);
-    paintOnPanel -> drawPixmap(0,0,(float)cwidth/scale, (float)cheight/scale, pixmap);
-    delete paintOnPanel;
 }
 
 void Panel::ReadXMLFile()
 {
+#if DEBUG
     qDebug() << "JESZCZE DZIAŁA WEWNĄTRZ";
+#endif
     QXmlStreamReader Rxml;
 
     QString filename = QFileDialog::getOpenFileName(this,
@@ -55,31 +67,43 @@ void Panel::ReadXMLFile()
     QFile file(filename);
         if (!file.open(QFile::ReadOnly | QFile::Text))
     {
+#if DEBUG
         qDebug() << "Error: Cannot read file " << qPrintable(filename)
                   << ": " << qPrintable(file.errorString());
-
+#endif
+        return;
     }
     Rxml.setDevice(&file);
     Rxml.readNext();
 
     if (Rxml.hasError()) {
+#if DEBUG
     qDebug() << "Error: Failed to parse file "
              << qPrintable(filename) << ": "
              << qPrintable(Rxml.errorString());
+#endif
+        return;
     }
     else if (file.error() != QFile::NoError)
     {
+#if DEBUG
         qDebug() << "Error: Cannot read file " << qPrintable(filename)
                   << ": " << qPrintable(file.errorString());
+#endif
+        return;
     }
+#if DEBUG
     qDebug() << "Opened";
+#endif
     while(!Rxml.atEnd())
     {
 
         if(Rxml.name() == "element" && Rxml.isStartElement())
         {
 
+#if DEBUG
             qDebug() << "element";
+#endif
             elementsOnPanel.push_back(Element::checkXML(Rxml));
         }
         Rxml.readNext();
@@ -87,6 +111,8 @@ void Panel::ReadXMLFile()
     }
     file.close();
     this->repaint();
+#if DEBUG
     qDebug() << "Closed";
+#endif
 }
 

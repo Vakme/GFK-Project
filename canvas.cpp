@@ -15,10 +15,7 @@
 
 Canvas::Canvas(QWidget *parent) : QWidget(parent),
     elementsOnCanvas(utils::make_unique_vector<Element>(
-      std::move(std::make_unique<Square>       (150,  50)),
-      std::move(std::make_unique<TriangleBig>  (150, 200)),
-      std::move(std::make_unique<TriangleSmall>(150, 300)),
-      std::move(std::make_unique<Rhombus>      (450,  50))
+      std::move(std::make_unique<Square>       (250,  250))
     )) {
     panel = this->parent()->findChild<Panel*>(QString("panel"));
     setMouseTracking(true);
@@ -87,6 +84,7 @@ void Canvas::resetCursorMode() {
             break;
     }
     cursorMode = CursorMode::None;
+    Comparator::compareElems(panel->elementsOnPanel, elementsOnCanvas);
     repaint();
 }
 
@@ -151,9 +149,6 @@ void Canvas::keyPressEvent(QKeyEvent *event) {
         panel->setCanvasSize(this->width(), this->height());
         panel->ReadXMLFile();
     }
-    else if(event->key() == Qt::Key_C) {
-        Comparator::compareElems(panel->elementsOnPanel, elementsOnCanvas);
-    }
     if(actualEl != nullptr) {
         if(event->key() == Qt::Key_X) {
             revertElemToShapeList();
@@ -161,8 +156,8 @@ void Canvas::keyPressEvent(QKeyEvent *event) {
     }
 
         switch (event->key()) {
-            case Qt::Key_R:  dragEl->rotateRight();  break;
-            case Qt::Key_E:  dragEl->rotateLeft ();  break;
+            case Qt::Key_E:  dragEl->rotateRight();  break;
+            case Qt::Key_Q:  dragEl->rotateLeft ();  break;
             case Qt::Key_W:  dragEl->moveUp     ();  break;
             case Qt::Key_S:  dragEl->moveDown   ();  break;
             case Qt::Key_A:  dragEl->moveLeft   ();  break;

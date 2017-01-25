@@ -10,9 +10,17 @@
 #include <QXmlStreamReader>
 enum class ElType { SQUARE, TRIANGLE_BIG, TRIANGLE_MID, TRIANGLE_SMALL, RHOMBUS };
 
+/*! \class  Element
+ *  \brief  Basic puzzle piece
+ */
 class Element
 {
 public:
+
+    /*!
+     * \fn      Element
+     * \brief
+     */
     Element() = delete;
     Element& operator =(Element && el);
     static Element* copy(const Element & el) { return new Element(el); }
@@ -23,10 +31,28 @@ public:
 
     const ElType typ;
 
+    /*!
+     * \fn      checkXML
+     * \brief   Matches an XML describin a single element into object (Element)
+     * \param   Rxml  XMLReader Object - current position in XML file
+     * \return  unique_ptr ready to put into elements on panel vector
+     * \see     ReadXmlFile (class Panel)
+     */
     static std::unique_ptr<Element> checkXML(QXmlStreamReader &Rxml);
 
-    //był const, nie może być, musisz przesuwać obiekt. Jeśli musi być, to wywal, ale przesuwanie na strzałkach nie działa
+
+    /*!
+     * \fn      centerPoint
+     * \brief   Getter for _centerPoint
+     * \return  copy of _centerPoint
+     */
     QPointF centerPoint() const;
+
+    /*!
+     * \fn      setCenterPoint
+     * \brief   Setter for _centerPoint
+     * \param   center  Setting point
+     */
     void setCenterPoint(QPointF center);
     const QColor color;
     QPolygonF getRealPoly(qreal x, qreal y) const;
@@ -35,27 +61,96 @@ public:
     bool isValid() const;
     void setValid(bool flag);
     bool intersects(const Element& other) const;
+
+    /*!
+     * \fn      rotateLeft
+     * \brief   Rotates element left
+     * \param   val  Angle value (degrees) - default 1
+     */
     void rotateLeft (int val = 1);
+
+    /*!
+     * \fn      rotateRight
+     * \brief   Rotates element right
+     * \param   val  Angle value (degrees) - default 1
+     */
     void rotateRight(int val = 1);
+
+    /*!
+     * \fn      moveUp
+     * \brief   Moves element up
+     * \param   val  Translation value (pixels) - default 1
+     */
     void moveUp     (int val = 1);
+
+    /*!
+     * \fn      moveDown
+     * \brief   Moves element down
+     * \param   val  Translation value (pixels) - default 1
+     */
     void moveDown   (int val = 1);
+
+
+    /*!
+     * \fn      moveLeft
+     * \brief   Moves element left
+     * \param   val  Translation value (pixels) - default 1
+     */
     void moveLeft   (int val = 1);
+
+
+    /*!
+     * \fn      rotateRight
+     * \brief   Moves element rigth
+     * \param   val  Translation value (pixels) - default 1
+     */
     void moveRight  (int val = 1);
+
+    /*!
+     * \fn      mirrorEl
+     * \brief   Changes mirror value (makes mirrored version of element)
+     */
     void mirrorEl();
+
     const QPixmap & getBitmap();
+
+    /*!
+     * \fn      getPoly
+     * \brief   Getter for polygon containing all points
+     * \return  copy of points QPolygonF
+     */
     QPolygonF getPoly() { return points; }
+
+    /*!
+     * \fn      getRot
+     * \brief   Gets rotation value (degrees)
+     * \return  copy of rotation (qreal)
+     */
     qreal getRot() { return rotation; }
+
+    /*!
+     * \fn      getMir
+     * \brief   Gets mirror value
+     * \return  copy of mirror value (bool)
+     */
     bool getMir() { return mirror; }
+
+    /*!
+     * \fn      getMirable
+     * \brief   Gets mirrorable value (saying if element may be mirrored)
+     * \return  true if element may be mirrored, false if not
+     */
     bool getMirable() { return mirrorable; }
 
-    //możesz mnie za to zabić.
-
 protected:
+
     Element(ElType typ, QPointF centerPoint, const QPolygonF& points,
             qreal rotation_max = 360, bool mirrorable = false);
+
     Element(int typ, QPointF centerPoint, const QPolygonF points, qreal rotation, bool mirror, bool mirrorable, qreal rotation_max);
 
 private:
+
     Element(const Element & el) = default;
 
     void updateBitmap();

@@ -8,6 +8,9 @@
 #include "utils.h"
 #include "element.h"
 
+/*! \class  ShapesList
+ *  \brief  Container to hold all the puzzles
+ */
 class ShapesList : public QListWidget
 {
     Q_OBJECT
