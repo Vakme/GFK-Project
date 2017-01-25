@@ -18,7 +18,9 @@ Panel::Panel(int width, int height, QWidget *parent) : cwidth(width), cheight(he
 
 void Panel::paintEvent(QPaintEvent *event)
 {
+#if DEBUG
     qDebug() << cwidth << " " << cheight;
+#endif
     QPixmap pixmap = QPixmap(cwidth, cheight);
     pixmap.fill(QColor(0,0,0,0));
     QPainter *painter = new QPainter(&pixmap);

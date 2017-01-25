@@ -269,14 +269,18 @@ std::unique_ptr<Element> Element::checkXML(QXmlStreamReader &Rxml) {
                 qDebug() << "mirror: " << Rxml.readElementText().toInt();
 #endif
             }
-            else
+            else {
                 mirror = false;
+            }
         }
-        else
+        else {
             qDebug() << "Invalid file";
+        }
 
         Rxml.readNext();
+#if DEBUG
         qDebug() << typ;
+#endif
     }
     if(static_cast<ElType>(typ) == ElType::TRIANGLE_BIG) {
         auto elPtr = std::move(std::make_unique<TriangleBig>(x, y));

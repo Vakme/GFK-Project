@@ -13,13 +13,13 @@ public:
 
     /*!
      * \fn      Comparator
-     * \brief   Constructor not needed because a static class
+     * \brief   Constructor not needed for a static class
      */
     Comparator() = delete;
 
     /*!
      * \fn      Comparator
-     * \brief   Copy constructor not needed because a static class
+     * \brief   Copy constructor not needed for a static class
      * \param   comparator  Object to copy
      */
     Comparator(const Comparator &) = delete;
@@ -39,7 +39,8 @@ public:
      * \param   elementsOnCanvas  Vector of elements displayed on canvas to compare
      * \param   elementsOnPanel   Vector of elements displayed on panel to compare
      */
-    static void compareElems(utils::unique_vector<Element> & elementsOnPanel, utils::unique_vector<Element> & elementsOnCanvas);
+    static void compareElems(utils::unique_vector<Element> & elementsOnPanel,
+                             utils::unique_vector<Element> & elementsOnCanvas);
 };
 
 #endif // COMPARATOR_H
