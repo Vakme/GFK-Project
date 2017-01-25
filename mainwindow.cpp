@@ -19,7 +19,7 @@ std::unique_ptr<MainWindow> MainWindow::_main;
 
 MainWindow * MainWindow::main() {
     if(_main == nullptr) {
-        _main = std::make_unique<MainWindow>();
+        _main = std::unique_ptr<MainWindow>(std::move(new MainWindow()));
     }
     return _main.get();
 }

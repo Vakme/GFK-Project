@@ -21,7 +21,9 @@ Element::Element(ElType typ, QPointF center, const QPolygonF& points,
 
 Element::Element(int typ, QPointF centerPoint, const QPolygonF points,
                  qreal rotation, bool mirror, bool mirrorable, qreal rotation_max) :
-    typ(static_cast<ElType>(typ)), _centerPoint(centerPoint), points(points), rotation(rotation), mirror(mirror), mirrorable(mirrorable), rotation_max(rotation_max) {
+    typ(static_cast<ElType>(typ)), _centerPoint(centerPoint), points(points), rotation(rotation),
+    mirror(mirror), mirrorable(mirrorable), rotation_max(rotation_max)
+{
     isChanged = true;
     bitmap = QPixmap(350, 350);
     bitmap.fill(QColor(0,0,0,0));
@@ -194,29 +196,29 @@ bool Element::intersects(const Element& other) const {
     return ! getRealPoly().intersected(other.getRealPoly()).isEmpty();
 }
 
-void Element::rotateLeft(int val) {
+void Element::rotateLeft(qreal val) {
     rotation -= val;
     reduceRotation();
     isChanged = true;
 }
 
-void Element::rotateRight(int val) {
+void Element::rotateRight(qreal val) {
     rotation += val;
     reduceRotation();
     isChanged = true;
 }
 
-void Element::moveUp(int val) {
+void Element::moveUp(qreal val) {
     _centerPoint -= QPointF(0, val);
     isChanged = true;
 }
 
-void Element::moveDown(int val) {
+void Element::moveDown(qreal val) {
     _centerPoint += QPointF(0, val);
     isChanged = true;
 }
 
-void Element::moveLeft(int val) {
+void Element::moveLeft(qreal val) {
     _centerPoint -= QPointF(val, 0);
     isChanged = true;
 }
