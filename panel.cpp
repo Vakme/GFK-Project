@@ -17,6 +17,7 @@ Panel::Panel(int width, int height, QWidget *parent) : cwidth(width), cheight(he
 }
 
 void Panel::loadFile() {
+    qDebug() << this->cwidth << " " << this->cheight;
     ReadXMLFile();
 }
 

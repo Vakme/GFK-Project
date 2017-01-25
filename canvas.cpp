@@ -18,6 +18,7 @@ Canvas::Canvas(QWidget *parent) : QWidget(parent),
       std::move(std::make_unique<Square>       (250,  250))
     )) {
     panel = this->parent()->findChild<Panel*>(QString("panel"));
+    panel->setCanvasSize(661, 431);
     setMouseTracking(true);
     cursorMode = CursorMode::None;
 }
